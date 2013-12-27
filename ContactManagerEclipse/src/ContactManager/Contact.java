@@ -6,12 +6,6 @@ package ContactManager;
  * not), and notes that the user may want to save about them.
  */
 public interface Contact {
-	/**
-	 * Returns the ID of the contact. 
-	 *
-	 * @return	the ID of the contact. 
-	 */
-	 int getId();
 
 	/** 
 	 * Returns the name of the contact. 
