@@ -3,6 +3,10 @@ package ContactManager;
 import java.util.Calendar; 
 import java.util.List; 
 import java.util.Set;
+import java.lang.NullPointerException;
+import java.lang.IllegalArgumentException;
+import java.lang.IllegalStateException;
+
 /**
  * A class to manage your contacts and meetings. 
  */
@@ -10,8 +14,8 @@ public interface ContactManager {
 	/**
 	 * Add a new meeting to be held in the future. 
 	 *
-	 * @param	contacts	a list of contacts that will participate in the meeting
-	 * @param	date		the date on which the meeting will take place
+	 * @param	contacts		a list of contacts that will participate in the meeting
+	 * @param	date			the date on which the meeting will take place
 	 * @return				the ID for the meeting
 	 * @throws				IllegalArgumentException if the meeting is set for a time in the past,
 	 * 						or if any contact is unknown / non-existent
@@ -65,7 +69,7 @@ public interface ContactManager {
 	 * the list will be chronologically sorted and will not contain any 
 	 * duplicates.
 	 *
-	 * @param	date	the date
+	 * @param	date		the date
 	 * @return			the list of meetings 
 	 */
 	 List<Meeting> getFutureMeetingList(Calendar date);
@@ -86,9 +90,9 @@ public interface ContactManager {
 	/**
 	 * Create a new record for a meeting that took place in the past. 
 	 *
-	 * @param	contacts	a list of participants
-	 * @param	date		the date on which the meeting took place
-	 * @param	text		messages to be added about the meeting
+	 * @param	contacts		a list of participants
+	 * @param	date			the date on which the meeting took place
+	 * @param	text			messages to be added about the meeting
 	 * @throws				IllegalArgumentException if the list of contacts is
 	 * 						empty, or any of the contacts does not exist
 	 * @throws				NullPointerException if any of the arguments is null 
@@ -104,7 +108,7 @@ public interface ContactManager {
 	 * It can be also used to add notes to a past meeting at a later date. 
 	 *
 	 * @param	id		the ID of the meeting
-	 * @param	text	messages to be added about the meeting
+	 * @param	text		messages to be added about the meeting
 	 * @throws			IllegalArgumentException if the meeting does not exist
 	 * @throws			IllegalStateException if the meeting is set for a date in the future
 	 * @throws			NullPointerException if the notes are null 
@@ -114,7 +118,7 @@ public interface ContactManager {
 	/**
 	 * Create a new contact with the specified name and notes. 
 	 *
-	 * @param	name	the name of the contact
+	 * @param	name		the name of the contact
 	 * @param	notes	notes to be added about the contact
 	 * @throws			NullPointerException if the name or the notes are null 
 	 */
@@ -133,7 +137,7 @@ public interface ContactManager {
 	/**
 	 * Returns a list with the contacts whose name contains that string. 
 	 *
-	 * @param	name	the string to search for
+	 * @param	name		the string to search for
 	 * @return			a list with the contacts whose name contains that string
 	 * @throws			NullPointerException if the parameter is null 
 	 */
