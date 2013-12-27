@@ -1,6 +1,6 @@
 package ContactManager;
 
-public class ContactImpl {
+public class ContactImpl implements Contact {
 	private int id;
 	private String name;
 	private String notes;
@@ -8,9 +8,6 @@ public class ContactImpl {
 	public ContactImpl(int id,String name) {
 		this.id = id;
 		this.name = name;
-	}
-	
-	public ContactImpl() {
 	}
 	
 	public int getId() {
