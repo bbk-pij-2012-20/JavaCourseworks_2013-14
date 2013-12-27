@@ -8,9 +8,10 @@ public class ContactImpl implements Contact {
 	public ContactImpl(String name) {
 		this.name = name;
 		id++;
+		notes = "";
 	}
 	
-	public int getId() {
+	public static int getId() {
 		return id;
 	}
 
@@ -18,7 +19,7 @@ public class ContactImpl implements Contact {
 		return name;
 	}
 	
-	String getNotes() {
+	public String getNotes() {
 		return notes;
 	}
 	
@@ -26,7 +27,10 @@ public class ContactImpl implements Contact {
 		notes += note; 
 	}
 	
-// added just to stop Eclipse complaining about a lack of a "main type"
+/* added just to stop Eclipse complaining about a lack of a "main type"
 	public static void main(String args[]) {	
-	}
+		ContactImpl ci = new ContactImpl("Shahin Zibaee");
+		System.out.println(ContactImpl.getId());
+		System.out.println(ci.getName());
+	}*/
 }
