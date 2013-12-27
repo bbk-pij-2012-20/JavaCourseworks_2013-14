@@ -18,7 +18,7 @@ public interface Meeting {
 	 * 
 	 * @param	contact		the contact added one-by-one to a meeting.
 	 */
-	 void addContact(ContactImpl contact);
+	 void addContact(Contact contact);
 	
 	/**
 	 * Returns the id of the meeting.
