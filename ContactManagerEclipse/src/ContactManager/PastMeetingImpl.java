@@ -1,6 +1,6 @@
 package ContactManager;
 	
-public class PastMeetingImpl implements PastMeeting {
+public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
 	private String notes;
 	
 	public String getNotes() {

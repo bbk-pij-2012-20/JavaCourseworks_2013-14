@@ -8,7 +8,7 @@ import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
 
 public class ContactManagerImpl implements ContactManager {
-	
+	private MeetingImpl  
 	public int addFutureMeeting(Set<ContactImpl> contacts, Calendar date) {
 		
 	}
