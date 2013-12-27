@@ -1,16 +1,19 @@
 package ContactManager;
 
-import java.util.Calendar;
-import java.util.List;
+import java.util.Calendar; 
+import java.util.List; 
 import java.util.Set;
+import java.lang.NullPointerException;
+import java.lang.IllegalArgumentException;
+import java.lang.IllegalStateException;
 
-public class ContactManagerImpl {
+public class ContactManagerImpl implements ContactManager {
 	int addFutureMeeting(Set<ContactImpl> contacts, Calendar date) {
 		this.contacts = contacts
 	}
 	
 	 PastMeetingImpl getPastMeeting(int id) {
-		 
+		
 	 }
 	 
 	 FutureMeetingImpl getFutureMeeting(int id) {
