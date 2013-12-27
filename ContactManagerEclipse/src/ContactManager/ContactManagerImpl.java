@@ -8,56 +8,56 @@ import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
 
 public class ContactManagerImpl implements ContactManager {
-	int addFutureMeeting(Set<ContactImpl> contacts, Calendar date) {
-		this.contacts = contacts
+	
+	public int addFutureMeeting(Set<ContactImpl> contacts, Calendar date) {
+		
 	}
 	
-	 PastMeetingImpl getPastMeeting(int id) {
+	public PastMeetingImpl getPastMeeting(int id) {
 		
-	 }
+	}
 	 
-	 FutureMeetingImpl getFutureMeeting(int id) {
-		 
-	 }
+	public FutureMeetingImpl getFutureMeeting(int id) {
+		
+	}
 	 
-	 MeetingImpl getMeeting(int id) {
-		 
-	 }
+	public MeetingImpl getMeeting(int id) {
+		
+	}
 	 
-	 List<MeetingImpl> getFutureMeetingList(ContactImpl contact) {
-		 
-	 }
+	public List<MeetingImpl> getFutureMeetingList(ContactImpl contact) {
+		
+	}
 	 
-	 List<MeetingImpl> getFutureMeetingList(Calendar date) {
+	public List<MeetingImpl> getFutureMeetingList(Calendar date) {
 		 
-	 }
+	}
 	 
-	 List<PastMeetingImpl> getPastMeetingList(ContactImpl contact) {
-		 
-	 }
+	public List<PastMeetingImpl> getPastMeetingList(ContactImpl contact) {
+		
+	}
 	 
-	 void addNewPastMeeting(Set<ContactImpl> contacts, Calendar date, String text) {
-		 
-	 }
-	 
-	 void addMeetingNotes(int id, String text) {
-		 
-		 
-	 }
+	public void addNewPastMeeting(Set<ContactImpl> contacts, Calendar date, String text) {
+		
+	}
+	
+	public void addMeetingNotes(int id, String text) {
+		
+	}
 
-	 void addNewContact(String name, String notes) {
-		 
-	 }
+	public void addNewContact(String name, String notes) {
+		
+	}
 
-	 Set<ContactImpl> getContacts(int... ids) {
-		 
-	 }
+	public Set<ContactImpl> getContacts(int... ids) {
+		
+	}
 
-	 Set<ContactImpl> getContacts(String name) {
-		 
-	 }
+	public Set<ContactImpl> getContacts(String name) {
+		
+	}
 
-	 void flush() { 
-		 
-	 }
+	public void flush() { 
+		
+	}
 }
