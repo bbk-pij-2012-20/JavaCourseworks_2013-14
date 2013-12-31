@@ -1,62 +1,93 @@
 package ContactManager;
 
+import java.util.ArrayList;
 import java.util.Calendar; 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List; 
+import java.util.Map;
 import java.util.Set;
 import java.lang.NullPointerException;
 import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
+import java.net.IDN;
 
 public class ContactManagerImpl implements ContactManager {
-	private MeetingImpl  
-	public int addFutureMeeting(Set<ContactImpl> contacts, Calendar date) {
-		
+	
+	public ContactManagerImpl() {
 	}
 	
-	public PastMeetingImpl getPastMeeting(int id) {
-		
+	@Override
+	public int addFutureMeeting(Set<ContactImpl> contacts,Calendar date) {
+		FutureMeetingImpl fm = new FutureMeetingImpl(contacts,date);
+		return fm.getId();
 	}
-	 
-	public FutureMeetingImpl getFutureMeeting(int id) {
-		
+	
+	@Override
+	public PastMeeting getPastMeeting(int id) {
+		Integer
+		Map<Integer,PastMeetingImpl> hm = new HashMap<Integer,PastMeetingImpl>();
+		PastMeeting pmi = hm.get(id);
+		return pmi;
 	}
-	 
-	public MeetingImpl getMeeting(int id) {
-		
+	
+	@Override
+	public FutureMeeting getFutureMeeting(int id) {
+		HashMap<Integer,FutureMeetingImpl> hm = new HashMap<>();
+		return hm.get(id);
 	}
-	 
-	public List<MeetingImpl> getFutureMeetingList(ContactImpl contact) {
-		
+	
+	@Override
+	public Meeting getMeeting(int id) {
+		HashMap<Integer,MeetingImpl> hm = new HashMap<>();
+		return hm.get(id);		
 	}
-	 
-	public List<MeetingImpl> getFutureMeetingList(Calendar date) {
+	
+	@Override 
+	public List<Meeting> getFutureMeetingList(Contact contact) {
+		List<MeetingImpl> meetings = new ArrayList<>();
+		//use iterator to go through the list or map. then use 
+		// enhanced for loop to put the meetings in a list.
+		return meetings;
+	}
+	
+	@Override
+	public List<Meeting> getFutureMeetingList(Calendar date) {
 		 
 	}
 	 
-	public List<PastMeetingImpl> getPastMeetingList(ContactImpl contact) {
+	@Override
+	public List<PastMeeting> getPastMeetingList(Contact contact) {
 		
 	}
 	 
-	public void addNewPastMeeting(Set<ContactImpl> contacts, Calendar date, String text) {
-		
+	@Override
+	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {		
 	}
 	
+	@Override
 	public void addMeetingNotes(int id, String text) {
 		
 	}
-
+	
+	@Override
 	public void addNewContact(String name, String notes) {
 		
 	}
 
-	public Set<ContactImpl> getContacts(int... ids) {
-		
+	@Override
+	public Set<Contact> getContacts(int... ids) {
+		Set<Contact> contacts = new HashSet<>();
+		return contacts;
 	}
 
-	public Set<ContactImpl> getContacts(String name) {
-		
+	@Override
+	public Set<Contact> getContacts(String name) {
+		Set<Contact> contacts = new HashSet<>();
+		return contacts;
 	}
 
+	@Override
 	public void flush() { 
 		
 	}

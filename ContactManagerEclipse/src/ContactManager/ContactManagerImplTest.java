@@ -7,16 +7,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import java.util.GregorianCalendar;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ContactManagerImplTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -28,27 +24,41 @@ public class ContactManagerImplTest {
 
 	@Test
 	public void testAddFutureMeeting() {
-		fail("Not yet implemented");
+		Calendar date = new GregorianCalendar(15,12,2014);
+		ContactManagerImpl cmi= new ContactManagerImpl();
+		Set<Contact> contacts = new HashSet<>();
+		contacts.add(new ContactImpl("shahin"));
+		contacts.add(new ContactImpl("micky"));
+		contacts.add(new ContactImpl("johnny"));
+		assertEquals(2,cmi.addFutureMeeting(contacts, date));
 	}
 
 	@Test
 	public void testGetPastMeeting() {
-		fail("Not yet implemented");
+		ContactManagerImpl cmi = new ContactManagerImpl();
+		PastMeetingImpl pmi = new PastMeetingImpl(contacts,date);
+		assertEquals(pmi,cmi.getPastMeeting(-1));	
 	}
 
 	@Test
 	public void testGetFutureMeeting() {
-		fail("Not yet implemented");
+		ContactManagerImpl cmi = new ContactManagerImpl();
+		FutureMeetingImpl fmi = new FutureMeetingImpl(contacts,date);
+		assertEquals(fmi,cmi.getFutureMeeting(2));	
 	}
 
 	@Test
 	public void testGetMeeting() {
-		fail("Not yet implemented");
+		ContactManagerImpl cmi = new ContactManagerImpl();
+		MeetingImpl mi = new MeetingImpl();
+		assertEquals(mi,cmi.getMeeting(1));
 	}
 
 	@Test
 	public void testGetFutureMeetingListContactImpl() {
-		fail("Not yet implemented");
+		ContactManagerImpl cmi = new ContactManagerImpl();
+		FutureMeetingImpl fmi = new FutureMeetingImpl();
+		assertEquals(mi,cmi.getFutureMeeting(4));
 	}
 
 	@Test
@@ -90,5 +100,4 @@ public class ContactManagerImplTest {
 	public void testFlush() {
 		fail("Not yet implemented");
 	}
-
 }

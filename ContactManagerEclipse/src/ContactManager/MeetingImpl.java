@@ -1,6 +1,8 @@
 package ContactManager;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -8,30 +10,34 @@ public class MeetingImpl implements Meeting {
 	
 	private static int id;
 	private Calendar date;
-	private Set<ContactImpl> contacts;
-	
-	// takes one contact at construction time. Therefore any meeting
-	// must always contain at least 1 contact. (No other constructor provided).
-	public MeetingImpl(Calendar date,ContactImpl contact) {
+	private Set<Contact> contacts;
+
+	public MeetingImpl(Set<Contact> contacts,Calendar date) {
 		this.date = date;
+		this.contacts = contacts;
 		contacts = new HashSet<>();
-		contacts.add(contact);
 		id++;
 	}
 	
-	public void addContact(ContactImpl contact) {
-		contacts.add(contact);
+	@Override
+	public void addContact(Contact contact) {
+		contacts.add((ContactImpl) contact);
 	}
 	
+	@Override
 	public int getId() {
+		int id = MeetingImpl.id;
 		return id;
 	}
 	
+	@Override
 	public Calendar getDate() {
 		return date;
 	}
 	
+	@Override
 	public Set<Contact> getContacts() {
+		Set<Contact> contacts = new HashSet<>();
 		return contacts;
 	}
 }
