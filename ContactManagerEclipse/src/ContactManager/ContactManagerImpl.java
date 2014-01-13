@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ContactManagerImpl implements ContactManager {
-	private 	Map<Integer,MeetingImpl> meetingMap;
-	private 	Map<Integer,FutureMeetingImpl> futureMeetingMap;
-	private 	Map<Integer,PastMeetingImpl> pastMeetingMap;
+	private 	Map<Integer,MeetingImpl> meetingMap = new HashMap<Integer,MeetingImpl>();
+	private 	Map<Integer,FutureMeetingImpl> futureMeetingMap = new HashMap<Integer,FutureMeetingImpl>();
+	private 	Map<Integer,PastMeetingImpl> pastMeetingMap = new HashMap<Integer,PastMeetingImpl>();
 	private 	Map<Integer,ContactImpl> contactMap;
 	int contactCounter = 0;
 	int meetingCounter = 0;
@@ -110,17 +110,17 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	@Override
 	public PastMeeting getPastMeeting(int id) {
-		return pmMap.get(id);
+		return pastMeetingMap.get(id);
 	}
 	
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
-		return fmMap.get(id);
+		return futureMeetingMap.get(id);
 	}
 	
 	@Override
 	public Meeting getMeeting(int id) {
-		return mMap.get(id);
+		return meetingMap.get(id);
 	}
 	
 	@Override 
@@ -130,8 +130,8 @@ public class ContactManagerImpl implements ContactManager {
 		// enhanced for loop to put the meetings in a list.
 		
 		@SuppressWarnings("unchecked")
-		List<Entry<Integer,FutureMeetingImpl>> fmList = (List<Entry<Integer, FutureMeetingImpl>>) fmMap.entrySet();
-		Iterator<Entry<Integer, FutureMeetingImpl>> fmIt = fmList.iterator();
+		List<Entry<Integer,FutureMeetingImpl>> futureMeetingList = (List<Entry<Integer, FutureMeetingImpl>>) futureMeetingMap.entrySet();
+		Iterator<Entry<Integer, FutureMeetingImpl>> futureMeetingIt = futureMeetingList.iterator();
 		
 // Should I make a MeetingList member variable here and/or in the MeetingImpl class ?
 // If in the MeetingImpl, should it be static?
