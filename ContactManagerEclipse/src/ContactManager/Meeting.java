@@ -10,16 +10,7 @@ import java.util.HashSet;
  * Meetings have unique IDs, scheduled date and a list of participating contacts 
  */
 public interface Meeting {
-	
-	/**
-	 * (Not in original interface). 
-	 * Add contacts to the meeting which takes one 
-	 * contact at construction time.
-	 * 
-	 * @param	contact		the contact added one-by-one to a meeting.
-	 */
-	 void addContact(Contact contact);
-	
+		
 	/**
 	 * Returns the id of the meeting.
 	 *

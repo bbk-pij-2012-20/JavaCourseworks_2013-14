@@ -7,6 +7,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -81,9 +82,23 @@ public class ContactManagerImplTest {
 		fail("Not yet implemented");
 	}
 
+	@Before
+	public void setUp() throws Exception {
+		ContactManagerImpl cmi = new ContactManagerImpl();
+		cmi.contactCounter = 0;
+	}
 	@Test
 	public void testAddNewContact() {
-		fail("Not yet implemented");
+		ContactImpl c1 = new ContactImpl();		
+		String name = "Shahin";
+		ContactManagerImpl cmi = new ContactManagerImpl();
+		cmi.addNewContact(name,"hash");
+		int contactCounter = 1;
+		Long hashId = (long) Math.abs(name.hashCode());
+		int hashIdInt = (int) (hashId%100000);
+		String idStr = ""+hashIdInt+contactCounter;
+		int idTest = Integer.parseInt(idStr);
+		assertEquals(idTest,c1.getId());
 	}
 
 	@Test

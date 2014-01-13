@@ -6,7 +6,14 @@ package ContactManager;
  * not), and notes that the user may want to save about them.
  */
 public interface Contact {
-
+	
+	/**
+	 * Returns the ID of the contact. 
+	 *
+	 * @return	the ID of the contact. 
+	 */
+	 int getId();
+	 
 	/** 
 	 * Returns the name of the contact. 
 	 *
@@ -27,7 +34,7 @@ public interface Contact {
 	/**
 	 * Add notes about the contact. 
 	 *
-	 * @param	note	the notes to be added 
+	 * @param	note	  the notes to be added 
 	 */
 	 void addNotes(String note); 
 }

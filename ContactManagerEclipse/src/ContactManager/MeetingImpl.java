@@ -1,32 +1,46 @@
 package ContactManager;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
-public class MeetingImpl implements Meeting {
+public class MeetingImpl implements Meeting,Serializable {
 	
-	private static int id;
+	private int id;
+	private int counter;
 	private Calendar date;
 	private Set<Contact> contacts;
+//	private Map<Integer,MeetingImpl> 
+	private Calendar nowDate = Calendar.getInstance();
 
 	public MeetingImpl(Set<Contact> contacts,Calendar date) {
-		this.date = date;
-		this.contacts = contacts;
-		contacts = new HashSet<>();
-		id++;
+		this.contacts = new HashSet<>();
+		setContacts(contacts);
+		setDate(date);
+		String dateStr = ""+date.getTime();
+		id = dateStr.hashCode() + ++counter;
+	}
+	public MeetingImpl(int id) {
+		setId(id);
 	}
 	
-	@Override
-	public void addContact(Contact contact) {
-		contacts.add((ContactImpl) contact);
+	private void setDate(Calendar date) {
+		this.date = date;
+	}
+	
+	private void setContacts(Set<Contact> contacts) {
+		this.contacts = contacts;
+	}
+	
+	private void setId(int id) {
+		this.id = id;
 	}
 	
 	@Override
 	public int getId() {
-		int id = MeetingImpl.id;
 		return id;
 	}
 	
@@ -37,7 +51,7 @@ public class MeetingImpl implements Meeting {
 	
 	@Override
 	public Set<Contact> getContacts() {
-		Set<Contact> contacts = new HashSet<>();
+//		Set<Contact> contacts = new HashSet<>();
 		return contacts;
 	}
 }

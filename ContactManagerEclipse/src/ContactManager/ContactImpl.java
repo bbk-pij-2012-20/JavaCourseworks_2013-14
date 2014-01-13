@@ -1,17 +1,17 @@
 package ContactManager;
 
 public class ContactImpl implements Contact {
-	private static int id;
+	protected int id;
 	private String name;
 	private String notes;
 	
 	public ContactImpl(String name) {
 		this.name = name;
-		id++;
 		notes = "";
 	}
+	public ContactImpl(){}
 	
-	public static int getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -26,11 +26,4 @@ public class ContactImpl implements Contact {
 	public void addNotes(String note) {
 		notes += note; 
 	}
-	
-/* added just to stop Eclipse complaining about a lack of a "main type"
-	public static void main(String args[]) {	
-		ContactImpl ci = new ContactImpl("Shahin Zibaee");
-		System.out.println(ContactImpl.getId());
-		System.out.println(ci.getName());
-	}*/
 }
