@@ -29,9 +29,9 @@ public class ContactManagerImpl implements ContactManager {
 	private 	Map<Integer,MeetingImpl> meetingMap = new HashMap<Integer,MeetingImpl>();
 	private 	Map<Integer,FutureMeetingImpl> futureMeetingMap = new HashMap<Integer,FutureMeetingImpl>();
 	private 	Map<Integer,PastMeetingImpl> pastMeetingMap = new HashMap<Integer,PastMeetingImpl>();
-	private 	Map<Integer,ContactImpl> contactMap;
-	int contactCounter = 0;
-	int meetingCounter = 0;
+	private 	Map<Integer,ContactImpl> contactMap = null;
+	private int counter = 0;
+	protected Set<Contact> contacts = null;
 	
 	private final String CONTACTFILE = null;
 
@@ -82,8 +82,8 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
 		Calendar nowDate = Calendar.getInstance();
-		MeetingImpl meeting;
-		Map<Integer,MeetingImpl> meetingMap;
+		MeetingImpl meeting = null;
+		Map<Integer,MeetingImpl> meetingMap = null;
 		try {
 			if (nowDate.after(date)) {
 				throw new IllegalArgumentException();
@@ -91,7 +91,8 @@ public class ContactManagerImpl implements ContactManager {
 			meeting = new FutureMeetingImpl(contacts,date);
 			meetingMap = new HashMap<Integer,MeetingImpl>();
 			
-			new MeetingImpl(generateId(date));
+			String dateStr = ""+date.getTime();
+			new MeetingImpl(generateId(dateStr));
 			
 		} catch (IllegalArgumentException e) {
 			System.out.println("can't set a future meeting with a past date");
@@ -100,12 +101,11 @@ public class ContactManagerImpl implements ContactManager {
 		return meeting.getId();		
 	}
 	
-	private int generateId(Calendar date) {
-		String dateStr = ""+date.getTime();
-		Long hashId = (long) Math.abs(dateStr.hashCode());
+	private int generateId(String str) {
+		Long hashId = (long) Math.abs(str.hashCode());
 		int hashIdInt = (int) (hashId%100000);
-		meetingCounter++;
-		String hashIdStr = ""+hashIdInt+meetingCounter;
+		counter++;
+		String hashIdStr = ""+hashIdInt+counter;
 		return Integer.parseInt(hashIdStr);
 	}
 	@Override
@@ -126,23 +126,29 @@ public class ContactManagerImpl implements ContactManager {
 	@Override 
 	public List<Meeting> getFutureMeetingList(Contact contact) {
 		List<Meeting> meetings = new ArrayList<>();
-		//use iterator to go through the list or map. then use 
-		// enhanced for loop to put the meetings in a list.
+// use iterator to go through the list or map. then use 
+// enhanced for loop to put the meetings in a list.
 		
 		@SuppressWarnings("unchecked")
 		List<Entry<Integer,FutureMeetingImpl>> futureMeetingList = (List<Entry<Integer, FutureMeetingImpl>>) futureMeetingMap.entrySet();
 		Iterator<Entry<Integer, FutureMeetingImpl>> futureMeetingIt = futureMeetingList.iterator();
 		
-// Should I make a MeetingList member variable here and/or in the MeetingImpl class ?
-// If in the MeetingImpl, should it be static?
+// look in the set of contacts for the contact within a try catch
+// block, if set does not contain the contact, throw 
+// IllegalArgumentException		
+		
+		if (futureMeetingIt.hasNext()) {
+	//		contains(contact)
+		}
+		
+// Does one ever hold a collection of some element within the class definition of that element ?
 		return meetings;
 	}
 	
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		List<Meeting> fml = new ArrayList<>();
-		
-		return 
+		List<Meeting> futureMeetingList = new ArrayList<>();		
+		return futureMeetingList;
 	}
 	 
 	@Override
@@ -165,13 +171,12 @@ public class ContactManagerImpl implements ContactManager {
 			if (name == null || notes == null) {
 				throw new NullPointerException();
 			}
-			ContactImpl c1 = new ContactImpl(name);
-			c1.addNotes(notes);
-			Long hashId = (long) Math.abs(name.hashCode());
-			int hashIdInt = (int) (hashId%100000);
-			contactCounter++;
-			String hashIdStr = ""+hashIdInt+contactCounter;
-			c1.id = Integer.parseInt(hashIdStr);
+// between here and before catch is where I should put code that should 
+// not be executed if the exception occurs. If I put code after the catch
+// it will execute regardless of the exception(s).
+ 			ContactImpl newContact = new ContactImpl(name,notes,generateId(name));
+			contacts.add(newContact);
+			contactMap.put(generateId(name),newContact);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -186,6 +191,10 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public Set<Contact> getContacts(String name) {
 		Set<Contact> contacts = new HashSet<>();
+		if (contacts.contains(name)) {
+			
+		}
+			
 		return contacts;
 	}
 

@@ -12,9 +12,10 @@ public class MeetingImpl implements Meeting,Serializable {
 	private int id;
 	private int counter;
 	private Calendar date;
-	private Set<Contact> contacts;
+	private ContactManagerImpl cmi = new ContactManagerImpl();
+	private Set<Contact> contacts = cmi.contacts;//not sure if it is beneficial to create contacts as a member field?
 //	private Map<Integer,MeetingImpl> 
-	private Calendar nowDate = Calendar.getInstance();
+//	private Calendar nowDate = Calendar.getInstance();
 
 	public MeetingImpl(Set<Contact> contacts,Calendar date) {
 		this.contacts = new HashSet<>();
