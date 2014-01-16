@@ -2,6 +2,7 @@ package ContactManager;
 
 import java.util.ArrayList;
 import java.util.Calendar; 
+import java.util.Collection;
 import java.util.GregorianCalendar; 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Iterator;
 
 public class ContactManagerImpl implements ContactManager {
 	private 	Map<Integer,MeetingImpl> meetingMap = new HashMap<Integer,MeetingImpl>();
@@ -32,7 +34,8 @@ public class ContactManagerImpl implements ContactManager {
 	private 	Map<Integer,ContactImpl> contactMap = null;
 	private int counter = 0;
 	private Set<Contact> contacts = null;
-	
+	private Calendar nowDate = Calendar.getInstance();
+
 	private final String CONTACTFILE = null;
 
 	public static void main(String[] args){}
@@ -67,22 +70,15 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	
 	private void updateMeetings() {
-		Set<Entry<Integer,FutureMeetingImpl>> futureMeetingSet = futureMeetingMap.entrySet();
-		Iterator<Entry<Integer, FutureMeetingImpl>> futureMeetingIt = futureMeetingSet.iterator();
-		Calendar now = Calendar.getInstance();
-
-		while (futureMeetingIt.hasNext()) {
-			Map.Entry<Integer,FutureMeetingImpl> futureMeetingSetObj = (Map.Entry<Integer,FutureMeetingImpl>) futureMeetingIt.next();
- 			if (now.after(futureMeetingSetObj.getValue().getDate()) == true) {
-				futureMeetingMap.remove(futureMeetingSetObj.getKey());
-				addNewPastMeeting(futureMeetingSetObj.getValue().getContacts(),futureMeetingSetObj.getValue().getDate(),"some text");
- 			}
+		for (FutureMeetingImpl futureMeeting : futureMeetingMap.values()) {
+		    if (nowDate.after(futureMeeting.getDate())) {
+		    		futureMeetingMap.remove(futureMeeting.getId());		    		
+		    }
 		}
 	}
 
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
-		Calendar nowDate = Calendar.getInstance();
 		MeetingImpl meeting = null;
 		Map<Integer,MeetingImpl> meetingMap = null;
 		try {
@@ -96,7 +92,7 @@ public class ContactManagerImpl implements ContactManager {
 			new MeetingImpl(generateId(dateStr));
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("can't set a future meeting with a past date");
+			System.out.println("can't set up a future meeting with a past date");
 		}
 		meetingMap.put(meeting.getId(),meeting); 
 		return meeting.getId();		
@@ -109,39 +105,53 @@ public class ContactManagerImpl implements ContactManager {
 		String hashIdStr = ""+hashIdInt+counter;
 		return Integer.parseInt(hashIdStr);
 	}
+	
 	@Override
 	public PastMeeting getPastMeeting(int id) {
+		try {
+			if (nowDate.before(pastMeetingMap.get(id).getDate())) {
+				throw new IllegalArgumentException();
+			}
+		} catch (IllegalArgumentException e) {
+			System.out.println("can't get past meeting with id of a future meeting");
+		}	
 		return pastMeetingMap.get(id);
 	}
 	
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
+		try {
+			if (nowDate.after(futureMeetingMap.get(id).getDate())) {
+				throw new IllegalArgumentException();
+			}
+		} catch (IllegalArgumentException e) {
+			System.out.println("can't get future meeting with id of a past meeting");
+		}	
 		return futureMeetingMap.get(id);
 	}
 	
 	@Override
 	public Meeting getMeeting(int id) {
-		return meetingMap.get(id);
+		return meetingMap.get(id);	
 	}
 	
 	@Override 
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		List<Meeting> meetings = new ArrayList<>();
-// use iterator to go through the list or map. then use 
-// enhanced for loop to put the meetings in a list.
-		
-		@SuppressWarnings("unchecked")
-		List<Entry<Integer,FutureMeetingImpl>> futureMeetingList = (List<Entry<Integer, FutureMeetingImpl>>) futureMeetingMap.entrySet();
-		Iterator<Entry<Integer, FutureMeetingImpl>> futureMeetingIt = futureMeetingList.iterator();
-		
-// look in the set of contacts for the contact within a try catch
-// block, if set does not contain the contact, throw 
-// IllegalArgumentException		
-		
-
-		
-// Does one ever hold a collection of some element within the class definition of that element ?
-		return meetings;
+		List<FutureMeetingImpl> futureMeetingList = (ArrayList<FutureMeetingImpl>) futureMeetingMap.values();
+		for (FutureMeetingImpl futMeeting : futureMeetingList) {
+			if (!futMeeting.getContacts().contains(contact)) {
+				futureMeetingList.remove(futMeeting);
+			}
+		}
+ 		try {
+ 			
+ 			if (futureMeetingList == null) {
+				throw new IllegalArgumentException();
+			}
+ 		} catch (IllegalArgumentException e) {
+			System.out.println("there are no meetings with that contact");
+ 		}	
+		return (List<Meeting>) futureMeetingList;	
 	}
 	
 	@Override

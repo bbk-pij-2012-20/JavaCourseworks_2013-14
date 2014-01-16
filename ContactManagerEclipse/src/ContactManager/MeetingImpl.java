@@ -11,10 +11,7 @@ public class MeetingImpl implements Meeting,Serializable {
 	
 	private int id;
 	private Calendar date;
-//	private ContactManagerImpl cmi = new ContactManagerImpl();
-//	private Set<Contact> contacts = null; //not sure if it is beneficial to create contacts as a member field?
-//	private Map<Integer,MeetingImpl> 
-//	private Calendar nowDate = Calendar.getInstance();
+	private Set<Contact> contacts = null;
 
 	public MeetingImpl(Set<Contact> contacts,Calendar date) {
 		contacts = new HashSet<>();
@@ -49,9 +46,6 @@ public class MeetingImpl implements Meeting,Serializable {
 		return date;
 	}
 
-//getContacts() method here suggests I should hold the 
-//Set<Contact> in this class rather than ContactManagerImpl. 
-//The latter class can then access this by getContacts() method.
 	@Override  
 	public Set<Contact> getContacts() {
 		return contacts;
