@@ -1,7 +1,7 @@
 package ContactManager;
 
 public class ContactImpl implements Contact {
-	protected int id;
+	private int id;
 	private String name;
 	private String notes;
 	

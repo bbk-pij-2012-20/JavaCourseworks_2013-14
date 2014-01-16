@@ -10,23 +10,22 @@ import java.util.HashSet;
 public class MeetingImpl implements Meeting,Serializable {
 	
 	private int id;
-	private int counter;
 	private Calendar date;
-	private ContactManagerImpl cmi = new ContactManagerImpl();
-	private Set<Contact> contacts = cmi.contacts;//not sure if it is beneficial to create contacts as a member field?
+//	private ContactManagerImpl cmi = new ContactManagerImpl();
+//	private Set<Contact> contacts = null; //not sure if it is beneficial to create contacts as a member field?
 //	private Map<Integer,MeetingImpl> 
 //	private Calendar nowDate = Calendar.getInstance();
 
 	public MeetingImpl(Set<Contact> contacts,Calendar date) {
-		this.contacts = new HashSet<>();
+		contacts = new HashSet<>();
 		setContacts(contacts);
 		setDate(date);
-		String dateStr = ""+date.getTime();
-		id = dateStr.hashCode() + ++counter;
 	}
 	public MeetingImpl(int id) {
 		setId(id);
 	}
+	
+	public MeetingImpl(){}
 	
 	private void setDate(Calendar date) {
 		this.date = date;
@@ -49,10 +48,12 @@ public class MeetingImpl implements Meeting,Serializable {
 	public Calendar getDate() {
 		return date;
 	}
-	
-	@Override
+
+//getContacts() method here suggests I should hold the 
+//Set<Contact> in this class rather than ContactManagerImpl. 
+//The latter class can then access this by getContacts() method.
+	@Override  
 	public Set<Contact> getContacts() {
-//		Set<Contact> contacts = new HashSet<>();
 		return contacts;
 	}
 }

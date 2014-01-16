@@ -31,7 +31,7 @@ public class ContactManagerImpl implements ContactManager {
 	private 	Map<Integer,PastMeetingImpl> pastMeetingMap = new HashMap<Integer,PastMeetingImpl>();
 	private 	Map<Integer,ContactImpl> contactMap = null;
 	private int counter = 0;
-	protected Set<Contact> contacts = null;
+	private Set<Contact> contacts = null;
 	
 	private final String CONTACTFILE = null;
 
@@ -63,6 +63,7 @@ public class ContactManagerImpl implements ContactManager {
 			System.out.println(sc.next());
 			sc.close();
 		}
+		contacts = new HashSet<>();
 	}
 	
 	private void updateMeetings() {
@@ -137,9 +138,7 @@ public class ContactManagerImpl implements ContactManager {
 // block, if set does not contain the contact, throw 
 // IllegalArgumentException		
 		
-		if (futureMeetingIt.hasNext()) {
-	//		contains(contact)
-		}
+
 		
 // Does one ever hold a collection of some element within the class definition of that element ?
 		return meetings;
@@ -171,11 +170,9 @@ public class ContactManagerImpl implements ContactManager {
 			if (name == null || notes == null) {
 				throw new NullPointerException();
 			}
-// between here and before catch is where I should put code that should 
-// not be executed if the exception occurs. If I put code after the catch
-// it will execute regardless of the exception(s).
- 			ContactImpl newContact = new ContactImpl(name,notes,generateId(name));
-			contacts.add(newContact);
+			ContactImpl newContact = new ContactImpl(name,notes,generateId(name));
+			MeetingImpl meeting = new MeetingImpl();
+ 			contacts.add(newContact);
 			contactMap.put(generateId(name),newContact);
 		} catch (Exception e) {
 			e.printStackTrace();
