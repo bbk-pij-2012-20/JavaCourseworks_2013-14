@@ -1,13 +1,24 @@
 package ContactManager;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Set;
 	
-public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
+@SuppressWarnings("serial")
+public class PastMeetingImpl extends MeetingImpl implements PastMeeting,Serializable {
 	private String notes;
 	
 	public PastMeetingImpl(Set<Contact> contacts,Calendar date) {
 		super(contacts,date);
+	}
+	
+	public PastMeetingImpl(Set<Contact> contacts,Calendar date, String text) {
+		super(contacts,date);
+		notes = text;
+	}
+	
+	public PastMeetingImpl(String text) {
+		notes = text;
 	}
 	
 	@Override

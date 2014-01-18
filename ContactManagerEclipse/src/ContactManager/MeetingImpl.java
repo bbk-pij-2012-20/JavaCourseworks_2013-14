@@ -2,8 +2,6 @@ package ContactManager;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -14,10 +12,11 @@ public class MeetingImpl implements Meeting,Serializable {
 	private Set<Contact> contacts = null;
 
 	public MeetingImpl(Set<Contact> contacts,Calendar date) {
-		contacts = new HashSet<>();
+		this.contacts = new HashSet<>();
 		setContacts(contacts);
 		setDate(date);
 	}
+	
 	public MeetingImpl(int id) {
 		setId(id);
 	}
