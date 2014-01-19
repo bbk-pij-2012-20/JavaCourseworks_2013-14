@@ -11,16 +11,13 @@ public class MeetingImpl implements Meeting,Serializable {
 	private Calendar date;
 	private Set<Contact> contacts = null;
 
-	public MeetingImpl(Set<Contact> contacts,Calendar date) {
+	public MeetingImpl(Set<Contact> contacts,Calendar date, int id) {
 		this.contacts = new HashSet<>();
 		setContacts(contacts);
 		setDate(date);
+		this.id = id;
 	}
-	
-	public MeetingImpl(int id) {
-		setId(id);
-	}
-	
+
 	public MeetingImpl(){}
 	
 	private void setDate(Calendar date) {
@@ -30,11 +27,7 @@ public class MeetingImpl implements Meeting,Serializable {
 	private void setContacts(Set<Contact> contacts) {
 		this.contacts = contacts;
 	}
-	
-	private void setId(int id) {
-		this.id = id;
-	}
-	
+		
 	@Override
 	public int getId() {
 		return id;

@@ -8,12 +8,12 @@ import java.util.Set;
 public class PastMeetingImpl extends MeetingImpl implements PastMeeting,Serializable {
 	private String notes;
 	
-	public PastMeetingImpl(Set<Contact> contacts,Calendar date) {
-		super(contacts,date);
+	public PastMeetingImpl(Set<Contact> contacts,Calendar date,int id) {
+		super(contacts,date,id);
 	}
 	
-	public PastMeetingImpl(Set<Contact> contacts,Calendar date, String text) {
-		super(contacts,date);
+	public PastMeetingImpl(Set<Contact> contacts,Calendar date,String text,int id) {
+		super(contacts,date,id);
 		notes = text;
 	}
 	

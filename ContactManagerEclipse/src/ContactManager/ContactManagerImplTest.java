@@ -14,10 +14,10 @@ import java.util.Set;
 
 public class ContactManagerImplTest {
 	
-	Calendar date;
+	Calendar someDate;
 	Calendar nowDate;
 	ContactManagerImpl cmi = null;
-	Set<Contact> contacts;
+	Set<Contact> someContacts;
 	int counter = 0;
 
 	@Before
@@ -31,19 +31,21 @@ public class ContactManagerImplTest {
 
 	@Before
 	public void setUp2() throws Exception {
-		date = new GregorianCalendar(15,12,2014);
+		someDate = new GregorianCalendar(15,12,2014);
 		nowDate = Calendar.getInstance();
-		date = new GregorianCalendar(15,12,2014);
-		nowDate = Calendar.getInstance();
-		contacts = new HashSet<>();
-		contacts.add(new ContactImpl("bob"));
-		contacts.add(new ContactImpl("mac"));
-		contacts.add(new ContactImpl("jon"));*/		
-	/*
+		someContacts = new HashSet<>();
+		someContacts.add(new ContactImpl("bob"));
+		someContacts.add(new ContactImpl("mac"));
+		someContacts.add(new ContactImpl("mac"));		
+	}
+	/**
+	 * test for addfutureMeeting, takes a set of contacts and a calendar date
+	 * and generates unique id using 'generateId()' and date as a string.
+	 */
 	@Test
-	public void testAddFutureMeeting() {	
-		assertEquals(2,cmi.addFutureMeeting(contacts, date));
-	}*/
+	public void testAddFutureMeeting() {		
+		assertEquals(2,cmi.addFutureMeeting(someContacts, someDate));
+	}
 	
 	/**
 	 * Unfortunately had to resort to changing accessibility of generateId() to public.  
@@ -133,9 +135,21 @@ public class ContactManagerImplTest {
 		assertEquals(idTest,c1.getId());
 	}*/
 
+	@Before
+	public void setUp12() throws Exception {
+		contacts = new HashSet<>();
+		contacts.add(new ContactImpl("bob"));
+		contacts.add(new ContactImpl("mac"));
+		contacts.add(new ContactImpl("mac"));	
+		int id = 977171;
+		int id = 78552;
+		int id = 78553;
+		
+		
 	@Test
 	public void testGetContactsIntArray() {
-		fail("Not yet implemented");
+		
+		assertEquals(contacts,);
 	}
 
 	@Test
