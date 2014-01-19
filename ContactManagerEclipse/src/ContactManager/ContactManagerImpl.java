@@ -313,7 +313,7 @@ public class ContactManagerImpl implements ContactManager {
 	public Set<Contact> getContacts(String name) {
 		for (Contact contact : contacts) {
 			if (contact.name = name) {
-			
+			// confused about how/when/where to cast between interface and implementation classes 
 		}
 			
 		return contacts;
