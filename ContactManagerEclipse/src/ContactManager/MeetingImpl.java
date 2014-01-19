@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Set;
 import java.util.HashSet;
 
+@SuppressWarnings("serial")
 public class MeetingImpl implements Meeting,Serializable {
 	
 	private int id;

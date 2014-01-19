@@ -2,14 +2,10 @@ package ContactManager;
 
 import java.util.ArrayList;
 import java.util.Calendar; 
-import java.util.Collection;
-import java.util.GregorianCalendar; 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List; 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,60 +20,93 @@ import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+
 /**
  * This class implements the ContactManager which holds 
- * all meetings paired with their id numbers in hashmaps. 
- * It holds all contacts in a hashset. 
+ * all meetings paired with their id numbers in HashMaps. 
+ * It holds all contacts in a HashSet. 
  * 
  * @author Shahin Zibaee 24th Jan 2014
  *
  */
 public class ContactManagerImpl implements ContactManager {
-	private 	Map<Integer,MeetingImpl> meetingMap = new HashMap<Integer,MeetingImpl>();
-	private 	Map<Integer,FutureMeetingImpl> futureMeetingMap = new HashMap<Integer,FutureMeetingImpl>();
-	private 	Map<Integer,PastMeetingImpl> pastMeetingMap = new HashMap<Integer,PastMeetingImpl>();
+	private 	Map<Integer,MeetingImpl> meetingMap = null;
+	private 	Map<Integer,FutureMeetingImpl> futureMeetingMap = null; 
+	private 	Map<Integer,PastMeetingImpl> pastMeetingMap = null;
 	private 	Map<Integer,ContactImpl> contactMap = null;
 	private int counter = 0;
 	private Set<Contact> contacts = null;
 	private Calendar nowDate = Calendar.getInstance();
 	
-	public static void main(String[] args){}
+	/*
+	 * Temporary psvm placed here to stop Eclipse complaining!
+	 */
+//	public static void main(String[] args){}
+	
+	/**
+	 * An empty constructor.
+	 */
+	public ContactManagerImpl(){}
+	
 	/**
 	 * This constructs a ContactManager with no parameters.
-	 *  
-	 * It searches the current directory for an xml file  
-	 * called "ContactManager.xml", reads it in and converts it 
+	 * It reads an xml file called "ContactManager.xml" from 
+	 * the current directory, reads it in and converts it 
 	 * into an object of ContactManagerImpl. 
+	 * 
 	 */
-	public ContactManagerImpl() {
+	public ContactManagerImpl(String filename) {
+		final String FILENAME = filename;
 		XMLDecoder decode = null;
 		try {
 			decode = new XMLDecoder(
 					new BufferedInputStream(
-						new FileInputStream("ContactManager.xml")));
+						new FileInputStream(FILENAME)));		
+		
+			meetingMap = new HashMap<Integer,MeetingImpl>();
+			futureMeetingMap = new HashMap<Integer,FutureMeetingImpl>();
+			pastMeetingMap = new HashMap<Integer,PastMeetingImpl>();
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 
-//		Map<Integer,MeetingImpl> idAndMeetings = (Map<Integer,MeetingImpl>) decode.readObject();
 		ContactManagerImpl contactManager = (ContactManagerImpl) decode.readObject();
 		decode.close();
 
 		update(contactManager.contacts,contactManager.futureMeetingMap);
 	}
-
+	
+	/**
+	 * Private method to update the contact manager object with the values read in 
+	 * from the xml file. 
+	 * 
+	 * @param contacts			all contacts from all meetings 
+	 * @param futureMeetingMap	future meetings paired with their unique id number
+	 * 
+	 */
 	private void update(Set<Contact> contacts,Map<Integer,FutureMeetingImpl> futureMeetingMap) {
 		updateContacts(contacts);
 		updateMeetings(futureMeetingMap);
 	}
-
+	
+	/**
+	 * Private method to update the full set of all contacts read in from the xml file.
+	 *
+	 * @param contacts	all contacts from all meetings
+	 * 
+	 */
 	private void updateContacts(Set<Contact> contacts) {
 		this.contacts = new HashSet<>(contacts);
 	}
 	
+	/**
+	 * Private method to update the file to move meetings that are now in the past
+	 * from future meetings to past meetings based on the current date.
+	 *  
+	 * @param futureMeetingMap	future meetings paired with their unique id number
+	 * 
+	 */
 	private void updateMeetings(Map<Integer,FutureMeetingImpl> futureMeetingMap) {
 		for (MeetingImpl meeting : futureMeetingMap.values()) {
 		    if (nowDate.after(meeting.getDate())) {
@@ -87,7 +116,17 @@ public class ContactManagerImpl implements ContactManager {
 		    }
 		}
 	}
-
+	
+	/**
+	 * Creates a new meeting with a new id number, and further stores
+	 * id as key and meeting as the value in a HashMap.
+	 * 
+	 * @param	contacts		the contacts who will attend the meeting
+	 * @param	date			the date on which the meeting will be held
+	 * @return	id			the unique id number, generated for this meeting
+	 * @throws				IllegalArgumentException if date is not in the future.
+	 * 
+	 */
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
 		MeetingImpl meeting = null;
@@ -96,9 +135,10 @@ public class ContactManagerImpl implements ContactManager {
 				throw new IllegalArgumentException();
 			}
 
-		meeting = new MeetingImpl(contacts,date,generateId(toString(date)));
-		meetingMap.put(meeting.getId(),meeting);
-		futureMeetingMap.put(meeting.getId(),(FutureMeetingImpl) meeting);
+			this.contacts.addAll(contacts);
+			meeting = new MeetingImpl(contacts,date,generateId(toString(date)));
+			meetingMap.put(meeting.getId(),meeting);
+			futureMeetingMap.put(meeting.getId(),(FutureMeetingImpl) meeting);
 			
 		} catch (IllegalArgumentException e) {
 			System.out.println("can't set up a future meeting with a past date");
@@ -106,29 +146,52 @@ public class ContactManagerImpl implements ContactManager {
 
 		return meeting.getId();		
 	}
-	public String toString(Calendar date) {
-		return ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);		
-	}
+	
 	/**
-	 * Generates a unique id number for any string, 
-	 * such as for a new contact or new meeting.
+	 * This private method converts the date of a new meeting to a string. 
 	 * 
-	 * @param str	a contact or date in string format
-	 * @return		a unique id number
+	 * @param	date		the date of a new meeting
+	 * @return			the date of a new meeting as a string
+	 * 
 	 */
-	//this is private, temporarily made public for JUnit test to work	
-	public int generateId(String str) {
-		Long hashId = (long) Math.abs(str.hashCode());
-		int hashIdInt = (int) (hashId%100000);
-		counter++;
-		String hashIdStr = ""+hashIdInt+counter;
-		return Integer.parseInt(hashIdStr);
+	private String toString(Calendar date) {
+		return ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);		
 	}
 	
 	/**
-	 * Get a past meeting with the unique
-	 * @param id		unique id for a meeting 
+	 * Private method to generate unique id number from any string, 
+	 * such as for a new contact or the date of a new meeting.
+	 * 
+	 * @param  str	a contact or date in string format
+	 * @return		a unique id number
+	 * @throws		NullPointerException if the string is null 
+	 * 
+	 */
+	//temporarily made public for JUnit test to work	
+	public int generateId(String str) {
+		String hashIdStr = null;
+		try {
+			if (str == null) {
+				throw new NullPointerException();
+			}
+			
+			Long hashId = (long) Math.abs(str.hashCode());
+			int hashIdInt = (int) (hashId%100000);
+			counter++;
+			hashIdStr = ""+hashIdInt+counter;
+		
+		} catch (NullPointerException e){
+			System.out.println("the input was null");
+		}
+			return Integer.parseInt(hashIdStr);
+	}
+	
+	/**
+	 * Get a past meeting with the unique.
+	 * 
+	 * @param	id	unique id for a meeting 
 	 * @return		a past meeting
+	 * 
 	 */
 	@Override
 	public PastMeeting getPastMeeting(int id) {
@@ -141,7 +204,16 @@ public class ContactManagerImpl implements ContactManager {
 		}	
 		return pastMeetingMap.get(id);
 	}
-	
+
+	/**
+	 * Private method to generate unique id number from any string, 
+	 * such as for a new contact or the date of a new meeting.
+	 * 
+	 * @param  id	the id number for a meeting
+	 * @return		the future meeting 
+	 * @throws		IllegalArgumentException if the id is for a past meeting 
+	 * 
+	 */
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
 		try {
@@ -154,6 +226,15 @@ public class ContactManagerImpl implements ContactManager {
 		return futureMeetingMap.get(id);
 	}
 	
+	/**
+	 * Private method to generate unique id number from any string, 
+	 * such as for a new contact or the date of a new meeting.
+	 * 
+	 * @param  id	the id number for a meeting
+	 * @return		the future meeting 
+	 * @throws		IllegalArgumentException if the id is for a past meeting 
+	 * 
+	 */	
 	@Override
 	public Meeting getMeeting(int id) {
 		return meetingMap.get(id);	
@@ -222,8 +303,7 @@ public class ContactManagerImpl implements ContactManager {
 	 
 	@Override
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {			
-		MeetingImpl meeting = null;
-		Map<Integer,MeetingImpl> meetingMap = null;
+		PastMeetingImpl meeting = null;
 		try {
 			if (contacts == null || date == null || text == null) {
 				throw new NullPointerException();
@@ -231,23 +311,19 @@ public class ContactManagerImpl implements ContactManager {
 			if (contacts.isEmpty() || !this.contacts.contains(contacts)) {
 				throw new IllegalArgumentException();
 			}
+			
 			this.contacts.addAll(contacts);
-			meeting = new PastMeetingImpl(contacts,date,text);
-			meetingMap = new HashMap<Integer,MeetingImpl>();
-			
-			String dateStr = ""+date.getTime();
-			new MeetingImpl(generateId(dateStr));
-			
+			meeting = new PastMeetingImpl(contacts,date,text,generateId(toString(date)));
+			pastMeetingMap.put(meeting.getId(),meeting);
+			meetingMap.put(meeting.getId(),meeting);		
+					
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			System.out.println("either contact list is empty or it contains a contact that doesn't exist");
+			System.out.println("Contact list is empty and/or one or more contacts don't exist.");
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			System.out.println("one or more of contacts/date/text is null");
+			System.out.println("One or more of contacts/date/text is null.");
 		}
-	
-		meetingMap.put(meeting.getId(),meeting);
-		pastMeetingMap.put(meeting.getId(),(PastMeetingImpl) meeting);
 	}
 	
 	@Override
@@ -303,19 +379,29 @@ public class ContactManagerImpl implements ContactManager {
 				}
 			} 
 			for (int i=0;i<ids.length;i++) {
-			contacts.add(contactMap.get(i)); 
+				contacts.add(contactMap.get(i)); 
 			}
-		
+		} catch (IllegalArgumentException e) {
+			System.out.println("no contact(s) correspond(s) to that/those id number(s)");
+		}
 		return contacts;
 	}
 
 	@Override
 	public Set<Contact> getContacts(String name) {
-		for (Contact contact : contacts) {
-			if (contact.name = name) {
-			// confused about how/when/where to cast between interface and implementation classes 
+		Set<Contact> contacts = new HashSet<>();
+		try {
+			if (name == null) {
+				throw new NullPointerException();
+			}
+			for (Contact contact : this.contacts) {
+				if (contact.getName().equals(name)) {
+					contacts.add(contact);
+				}
+			}
+		} catch (NullPointerException e) {
+			System.out.println("you gave no name");
 		}
-			
 		return contacts;
 	}
 

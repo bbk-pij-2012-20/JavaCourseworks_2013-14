@@ -48,6 +48,10 @@ public class ContactImpl implements Contact {
 	
 	public ContactImpl(){}
 	
+	/**
+	 * 
+	 * @param id		
+	 */
 	private void setId(int id) {
 		this.id = id;
 	}
