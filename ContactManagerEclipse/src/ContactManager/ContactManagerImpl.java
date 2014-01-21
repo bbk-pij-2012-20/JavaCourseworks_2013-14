@@ -32,10 +32,10 @@ import java.io.FileOutputStream;
  */
 public class ContactManagerImpl implements ContactManager {
 	private static final String FILENAME = "contacts.xml";
-	private 	Map<Integer,MeetingImpl> meetingMap = null;
-	private 	Map<Integer,FutureMeetingImpl> futureMeetingMap = null; 
-	private 	Map<Integer,PastMeetingImpl> pastMeetingMap = null;
-	private 	Map<Integer,ContactImpl> contactMap = null;
+	private 	Map<Integer,Meeting> meetingMap = null;
+	private 	Map<Integer,FutureMeeting> futureMeetingMap = null; 
+	private 	Map<Integer,PastMeeting> pastMeetingMap = null;
+	private 	Map<Integer,Contact> contactMap = null;
 	private int counter = 0;
 	private Set<Contact> contacts = null;
 	private Calendar nowDate = Calendar.getInstance();
@@ -50,9 +50,9 @@ public class ContactManagerImpl implements ContactManager {
 	public ContactManagerImpl() {
 		
 		if (!new File(FILENAME).exists()) {
-			meetingMap = new HashMap<Integer,MeetingImpl>();
-			futureMeetingMap = new HashMap<Integer,FutureMeetingImpl>();
-			pastMeetingMap = new HashMap<Integer,PastMeetingImpl>();
+			meetingMap = new HashMap<Integer,Meeting>();
+			futureMeetingMap = new HashMap<Integer,FutureMeeting>();
+			pastMeetingMap = new HashMap<Integer,PastMeeting>();
 			contacts = new HashSet<>();
 		} else {
 			XMLDecoder decode = null;
@@ -61,10 +61,10 @@ public class ContactManagerImpl implements ContactManager {
 							new BufferedInputStream(
 								new FileInputStream(FILENAME)));
 				
-				meetingMap = (Map<Integer,MeetingImpl>) decode.readObject();
-				futureMeetingMap = (Map<Integer,FutureMeetingImpl>) decode.readObject();
-				pastMeetingMap = (Map<Integer,PastMeetingImpl>) decode.readObject();
-				contactMap = (Map<Integer,ContactImpl>) decode.readObject();
+				meetingMap = (Map<Integer,Meeting>) decode.readObject();
+				futureMeetingMap = (Map<Integer,FutureMeeting>) decode.readObject();
+				pastMeetingMap = (Map<Integer,PastMeeting>) decode.readObject();
+				contactMap = (Map<Integer,Contact>) decode.readObject();
 				contacts = (Set<Contact>) decode.readObject();
 				
 				decode.close();// do I need the close() at all ...???
@@ -77,7 +77,7 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	
 	private void updateMeetings() {
-		for (MeetingImpl meeting : futureMeetingMap.values()) {
+		for (Meeting meeting : futureMeetingMap.values()) {
 		    if (nowDate.after(meeting.getDate())) {
 		    		PastMeetingImpl pastMeeting = (PastMeetingImpl) meeting;
 		    		pastMeetingMap.put(pastMeeting.getId(),pastMeeting);
@@ -106,7 +106,7 @@ public class ContactManagerImpl implements ContactManager {
 			this.contacts.addAll(contacts);
 			meeting = new MeetingImpl(contacts,date,generateId(toString(date)));
 			meetingMap.put(meeting.getId(),meeting);
-			futureMeetingMap.put(meeting.getId(),(FutureMeetingImpl) meeting);
+			futureMeetingMap.put(meeting.getId(),(FutureMeeting) meeting);
 			
 		} catch (IllegalArgumentException e) {
 			System.out.println("can't set up a future meeting with a past date");
@@ -211,8 +211,8 @@ public class ContactManagerImpl implements ContactManager {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override 
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		List<FutureMeetingImpl> futureMeetingList = (ArrayList<FutureMeetingImpl>) futureMeetingMap.values();
-		for (FutureMeetingImpl futMeeting : futureMeetingList) {
+		List<FutureMeeting> futureMeetingList = (ArrayList<FutureMeeting>) futureMeetingMap.values();
+		for (FutureMeeting futMeeting : futureMeetingList) {
 			if (!futMeeting.getContacts().contains(contact)) {
 				futureMeetingList.remove(futMeeting);
 			}
@@ -232,14 +232,14 @@ public class ContactManagerImpl implements ContactManager {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		List<FutureMeetingImpl> futureMeetingList = (ArrayList<FutureMeetingImpl>) futureMeetingMap.values();
+		List<FutureMeeting> futureMeetingList = (ArrayList<FutureMeeting>) futureMeetingMap.values();
 		
-		for (FutureMeetingImpl futMeeting : futureMeetingList) {
+		for (FutureMeeting futMeeting : futureMeetingList) {
 			if (!futMeeting.getDate().equals(date)) {
 				futureMeetingList.remove(futMeeting);
 			}
 		}
-		SortedSet<FutureMeetingImpl> futureMeetingSet = new TreeSet<>(futureMeetingList); 
+		SortedSet<FutureMeeting> futureMeetingSet = new TreeSet<>(futureMeetingList); 
 				
 		return new ArrayList(futureMeetingSet);	
 	}
@@ -247,14 +247,14 @@ public class ContactManagerImpl implements ContactManager {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
-		List<PastMeetingImpl> pastMeetingList = (ArrayList<PastMeetingImpl>) pastMeetingMap.values();
-		SortedSet<PastMeetingImpl> pastMeetingSet = null;
+		List<PastMeeting> pastMeetingList = (ArrayList<PastMeeting>) pastMeetingMap.values();
+		SortedSet<PastMeeting> pastMeetingSet = null;
 		try {
 			if (!contacts.contains(contact)) {
 				throw new IllegalArgumentException();
 			}
 		
-			for (PastMeetingImpl pastMeeting : pastMeetingList) {
+			for (PastMeeting pastMeeting : pastMeetingList) {
 				if (!pastMeeting.getContacts().contains(contact)) {
 					pastMeetingList.remove(pastMeeting);
 				}
@@ -296,7 +296,7 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public void addMeetingNotes(int id, String text) {
-		MeetingImpl meeting;
+		Meeting meeting;
 		try {
 			meeting = meetingMap.get(id);
 			if (nowDate.before(meeting.getDate())) {
@@ -340,15 +340,18 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public Set<Contact> getContacts(int... ids) {
 		Set<Contact> contacts = new HashSet<>();
+		
 		try {
 			for (int i=0;i<ids.length;i++) {
 				if (!contactMap.containsKey(ids[i])) {
 					throw new IllegalArgumentException();
 				}
 			} 
+			
 			for (int i=0;i<ids.length;i++) {
 				contacts.add(contactMap.get(i)); 
 			}
+			
 		} catch (IllegalArgumentException e) {
 			System.out.println("no contact(s) correspond(s) to that/those id number(s)");
 		}
