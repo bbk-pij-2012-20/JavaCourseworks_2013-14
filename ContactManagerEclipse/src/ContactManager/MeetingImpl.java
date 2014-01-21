@@ -19,12 +19,26 @@ public class MeetingImpl implements Meeting,Serializable {
 		this.id = id;
 	}
 
+	/**
+	 * An empty constructor.
+	 */
 	public MeetingImpl(){}
 	
+	/**
+	 * This private method sets the date of a meeting.
+	 * 
+	 * @param date	the date of the meeting
+	 */
 	private void setDate(Calendar date) {
 		this.date = date;
 	}
 	
+	/**
+	 * This private method sets the contacts who will attend 
+	 * the meeting.
+	 * 
+	 * @param contacts	one or more contacts 
+	 */
 	private void setContacts(Set<Contact> contacts) {
 		this.contacts = contacts;
 	}
