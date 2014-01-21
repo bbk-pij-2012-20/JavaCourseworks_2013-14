@@ -17,6 +17,7 @@ import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,6 +31,7 @@ import java.io.FileOutputStream;
  *
  */
 public class ContactManagerImpl implements ContactManager {
+	private static final String FILENAME = "contacts.xml";
 	private 	Map<Integer,MeetingImpl> meetingMap = null;
 	private 	Map<Integer,FutureMeetingImpl> futureMeetingMap = null; 
 	private 	Map<Integer,PastMeetingImpl> pastMeetingMap = null;
@@ -38,76 +40,43 @@ public class ContactManagerImpl implements ContactManager {
 	private Set<Contact> contacts = null;
 	private Calendar nowDate = Calendar.getInstance();
 	
-	/*
-	 * Temporary psvm placed here to stop Eclipse complaining!
-	 */
-//	public static void main(String[] args){}
-	
-	/**
-	 * An empty constructor.
-	 */
-	public ContactManagerImpl(){}
-	
 	/**
 	 * This constructs a ContactManager with no parameters.
 	 * It reads an xml file called "ContactManager.xml" from 
 	 * the current directory, reads it in and converts it 
-	 * into an object of ContactManagerImpl. 
-	 * 
+	 * into an object of ContactManagerImpl.  
 	 */
-	public ContactManagerImpl(String filename) {
-		final String FILENAME = filename;
-		XMLDecoder decode = null;
-		try {
-			decode = new XMLDecoder(
-					new BufferedInputStream(
-						new FileInputStream(FILENAME)));		
+	@SuppressWarnings("unchecked")
+	public ContactManagerImpl() {
 		
+		if (!new File(FILENAME).exists()) {
 			meetingMap = new HashMap<Integer,MeetingImpl>();
 			futureMeetingMap = new HashMap<Integer,FutureMeetingImpl>();
 			pastMeetingMap = new HashMap<Integer,PastMeetingImpl>();
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			contacts = new HashSet<>();
+		} else {
+			XMLDecoder decode = null;
+			try {
+				decode = new XMLDecoder(
+							new BufferedInputStream(
+								new FileInputStream(FILENAME)));
+				
+				meetingMap = (Map<Integer,MeetingImpl>) decode.readObject();
+				futureMeetingMap = (Map<Integer,FutureMeetingImpl>) decode.readObject();
+				pastMeetingMap = (Map<Integer,PastMeetingImpl>) decode.readObject();
+				contactMap = (Map<Integer,ContactImpl>) decode.readObject();
+				contacts = (Set<Contact>) decode.readObject();
+				
+				decode.close();// do I need the close() at all ...???
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
-
-		ContactManagerImpl contactManager = (ContactManagerImpl) decode.readObject();
-		decode.close();
-
-		update(contactManager.contacts,contactManager.futureMeetingMap);
+		updateMeetings();
 	}
 	
-	/**
-	 * Private method to update the contact manager object with the values read in 
-	 * from the xml file. 
-	 * 
-	 * @param contacts			all contacts from all meetings 
-	 * @param futureMeetingMap	future meetings paired with their unique id number
-	 * 
-	 */
-	private void update(Set<Contact> contacts,Map<Integer,FutureMeetingImpl> futureMeetingMap) {
-		updateContacts(contacts);
-		updateMeetings(futureMeetingMap);
-	}
-	
-	/**
-	 * Private method to update the full set of all contacts read in from the xml file.
-	 *
-	 * @param contacts	all contacts from all meetings
-	 * 
-	 */
-	private void updateContacts(Set<Contact> contacts) {
-		this.contacts = new HashSet<>(contacts);
-	}
-	
-	/**
-	 * Private method to update the file to move meetings that are now in the past
-	 * from future meetings to past meetings based on the current date.
-	 *  
-	 * @param futureMeetingMap	future meetings paired with their unique id number
-	 * 
-	 */
-	private void updateMeetings(Map<Integer,FutureMeetingImpl> futureMeetingMap) {
+	private void updateMeetings() {
 		for (MeetingImpl meeting : futureMeetingMap.values()) {
 		    if (nowDate.after(meeting.getDate())) {
 		    		PastMeetingImpl pastMeeting = (PastMeetingImpl) meeting;
@@ -118,18 +87,17 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	
 	/**
-	 * Creates a new meeting with a new id number, and further stores
-	 * id as key and meeting as the value in a HashMap.
+	 * Creates a new meeting with a new id number which is stored with 
+	 * its meeting as a key-value pair in a HashMap.
 	 * 
 	 * @param	contacts		the contacts who will attend the meeting
 	 * @param	date			the date on which the meeting will be held
 	 * @return	id			the unique id number, generated for this meeting
 	 * @throws				IllegalArgumentException if date is not in the future.
-	 * 
 	 */
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
-		MeetingImpl meeting = null;
+		Meeting meeting = null;
 		try {
 			if (nowDate.after(date)) {
 				throw new IllegalArgumentException();
@@ -166,8 +134,8 @@ public class ContactManagerImpl implements ContactManager {
 	 * @return		a unique id number
 	 * @throws		NullPointerException if the string is null 
 	 * 
+	 * (needs to made temporarily public for JUnit to access it.)
 	 */
-	//temporarily made public for JUnit test to work	
 	public int generateId(String str) {
 		String hashIdStr = null;
 		try {
@@ -417,10 +385,17 @@ public class ContactManagerImpl implements ContactManager {
 			encode = new XMLEncoder(
 				new BufferedOutputStream(
 					new FileOutputStream(XMLFILENAME)));
+
+			encode.writeObject(meetingMap);
+			encode.writeObject(futureMeetingMap);
+			encode.writeObject(pastMeetingMap);
+			encode.writeObject(contactMap);
+			encode.writeObject(contacts);
+
 		} catch (FileNotFoundException e) {
 				e.printStackTrace();
 		}
-		encode.writeObject(new ContactManagerImpl());
-		encode.close();
+		
+		encode.close();// do I need this close() either ???
 	}
 }
