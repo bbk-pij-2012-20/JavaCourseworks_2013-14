@@ -31,7 +31,7 @@ import java.io.FileOutputStream;
  *
  */
 public class ContactManagerImpl implements ContactManager {
-	private static final String FILENAME = "contacts.xml";
+	private static final String XMLFILENAME = "contacts.xml";
 	private 	Map<Integer,Meeting> meetingMap = null;
 	private 	Map<Integer,FutureMeeting> futureMeetingMap = null; 
 	private 	Map<Integer,PastMeeting> pastMeetingMap = null;
@@ -48,8 +48,7 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public ContactManagerImpl() {
-		
-		if (!new File(FILENAME).exists()) {
+		if (!new File(XMLFILENAME).exists()) {
 			meetingMap = new HashMap<Integer,Meeting>();
 			futureMeetingMap = new HashMap<Integer,FutureMeeting>();
 			pastMeetingMap = new HashMap<Integer,PastMeeting>();
@@ -59,7 +58,7 @@ public class ContactManagerImpl implements ContactManager {
 			try {
 				decode = new XMLDecoder(
 							new BufferedInputStream(
-								new FileInputStream(FILENAME)));
+								new FileInputStream(XMLFILENAME)));
 				
 				meetingMap = (Map<Integer,Meeting>) decode.readObject();
 				futureMeetingMap = (Map<Integer,FutureMeeting>) decode.readObject();
@@ -97,16 +96,16 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
-		Meeting meeting = null;
+		FutureMeeting meeting = null;
 		try {
 			if (nowDate.after(date)) {
 				throw new IllegalArgumentException();
 			}
 
 			this.contacts.addAll(contacts);
-			meeting = new MeetingImpl(contacts,date,generateId(toString(date)));
+			meeting = new FutureMeetingImpl(contacts,date,generateId(toString(date)));
 			meetingMap.put(meeting.getId(),meeting);
-			futureMeetingMap.put(meeting.getId(),(FutureMeeting) meeting);
+			futureMeetingMap.put(meeting.getId(),meeting);
 			
 		} catch (IllegalArgumentException e) {
 			System.out.println("can't set up a future meeting with a past date");
@@ -138,6 +137,7 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	public int generateId(String str) {
 		String hashIdStr = null;
+		boolean unique = false;
 		try {
 			if (str == null) {
 				throw new NullPointerException();
@@ -145,9 +145,17 @@ public class ContactManagerImpl implements ContactManager {
 			
 			Long hashId = (long) Math.abs(str.hashCode());
 			int hashIdInt = (int) (hashId%100000);
-			counter++;
-			hashIdStr = ""+hashIdInt+counter;
-		
+			
+			while (!unique) {
+				if (contactMap.containsKey(hashIdInt) || meetingMap.containsKey(hashIdInt)) {
+					counter++;					
+				} else {
+					unique = true;
+				}
+			}
+			
+			hashIdStr = ""+hashIdInt+counter;		
+				
 		} catch (NullPointerException e){
 			System.out.println("the input was null");
 		}
@@ -381,7 +389,6 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	@Override
 	public void flush() { 
-		final String XMLFILENAME ="ContactManager.xml";
 
 		XMLEncoder encode = null; 
 		try {
@@ -396,7 +403,7 @@ public class ContactManagerImpl implements ContactManager {
 			encode.writeObject(contacts);
 
 		} catch (FileNotFoundException e) {
-				e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		encode.close();// do I need this close() either ???
