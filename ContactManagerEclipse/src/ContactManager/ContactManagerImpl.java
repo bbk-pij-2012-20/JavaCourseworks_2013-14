@@ -53,6 +53,7 @@ public class ContactManagerImpl implements ContactManager {
 			futureMeetingMap = new HashMap<Integer,FutureMeeting>();
 			pastMeetingMap = new HashMap<Integer,PastMeeting>();
 			contacts = new HashSet<>();
+			contactMap = new HashMap<Integer,Contact>();
 		} else {
 			XMLDecoder decode = null;
 			try {
@@ -65,7 +66,7 @@ public class ContactManagerImpl implements ContactManager {
 				pastMeetingMap = (Map<Integer,PastMeeting>) decode.readObject();
 				contactMap = (Map<Integer,Contact>) decode.readObject();
 				contacts = (Set<Contact>) decode.readObject();
-				
+					
 				decode.close();// do I need the close() at all ...???
 
 			} catch (FileNotFoundException e) {
@@ -121,8 +122,19 @@ public class ContactManagerImpl implements ContactManager {
 	 * @return			the date of a new meeting as a string
 	 * 
 	 */
-	private String toString(Calendar date) {
-		return ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);		
+	public String toString(Calendar date) {
+		String DateStr = null;
+		try {
+			if (date == null) {
+				throw new NullPointerException();
+			}
+			
+			DateStr = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+	
+		} catch (NullPointerException e) {
+			System.out.println("the input date to toString() was null");
+		}
+		return DateStr;		
 	}
 	
 	/**
@@ -136,30 +148,38 @@ public class ContactManagerImpl implements ContactManager {
 	 * (needs to made temporarily public for JUnit to access it.)
 	 */
 	public int generateId(String str) {
-		String hashIdStr = null;
-		boolean unique = false;
+		int hashId = 0;
 		try {
 			if (str == null) {
 				throw new NullPointerException();
 			}
-			
-			Long hashId = (long) Math.abs(str.hashCode());
-			int hashIdInt = (int) (hashId%100000);
+
+			Long hashIdLong = (long) Math.abs(str.hashCode());
+			hashId = (int) (hashIdLong%100000);
+
+			String hashIdStr = null;
+			boolean unique = false;
 			
 			while (!unique) {
-				if (contactMap.containsKey(hashIdInt) || meetingMap.containsKey(hashIdInt)) {
-					counter++;					
+				hashIdStr = ""+hashId+counter;//counter = 0
+				hashId = Integer.parseInt(hashIdStr);
+			
+				if (!contactMap.containsKey(hashId) || !meetingMap.containsKey(hashId)) {
+					unique = true;					
 				} else {
-					unique = true;
+					counter++;
+					System.out.println("counter inside: "+counter);
 				}
 			}
-			
-			hashIdStr = ""+hashIdInt+counter;		
-				
-		} catch (NullPointerException e){
-			System.out.println("the input was null");
+			System.out.println("counter outside: "+counter);
+
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			System.out.println("the input string to generateId() was null");
 		}
-			return Integer.parseInt(hashIdStr);
+		System.out.println("counter before return: "+counter);
+
+		return hashId;
 	}
 	
 	/**
@@ -171,14 +191,20 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	@Override
 	public PastMeeting getPastMeeting(int id) {
+		PastMeeting pastMeeting = null;
 		try {
-			if (nowDate.before(pastMeetingMap.get(id).getDate())) {
-				throw new IllegalArgumentException();
+			if (id == 0) {
+				pastMeeting = null;
+			} else {
+				pastMeeting = pastMeetingMap.get(id);
+				if (nowDate.before(pastMeeting.getDate())) {
+					throw new IllegalArgumentException();
+				}
 			}
 		} catch (IllegalArgumentException e) {
 			System.out.println("can't get past meeting with id of future meeting");
 		}	
-		return pastMeetingMap.get(id);
+		return pastMeeting;
 	}
 
 	/**
@@ -222,15 +248,16 @@ public class ContactManagerImpl implements ContactManager {
 		List<FutureMeeting> futureMeetingList = (ArrayList<FutureMeeting>) futureMeetingMap.values();
 		for (FutureMeeting futMeeting : futureMeetingList) {
 			if (!futMeeting.getContacts().contains(contact)) {
+//if contains() uses equals(), could override it to compare ids rather than if the objects have the same reference?
+//but what what other methods would this affect? Would it for eg alter the containsKey() method or others?				
 				futureMeetingList.remove(futMeeting);
 			}
 		}
 		try {
-			if (!contacts.contains(contact)) {
+			if (!contacts.contains(contact)) { 
+				throw new IllegalArgumentException();
 			}
-		
-		throw new IllegalArgumentException();
-		
+	
 		} catch (IllegalArgumentException e) {
 			System.out.println("that contact does not exist");
  		}	
@@ -278,8 +305,8 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	 
 	@Override
-	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {			
-		PastMeetingImpl meeting = null;
+	public void addNewPastMeeting(Set<Contact> contacts,Calendar date,String text) {			
+		PastMeeting meeting = null;
 		try {
 			if (contacts == null || date == null || text == null) {
 				throw new NullPointerException();
@@ -330,7 +357,7 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public void addNewContact(String name, String notes) {
-		ContactImpl newContact;
+		Contact newContact;
 		try {
 			if (name == null || notes == null) {
 				throw new NullPointerException();
@@ -350,12 +377,13 @@ public class ContactManagerImpl implements ContactManager {
 		Set<Contact> contacts = new HashSet<>();
 		
 		try {
+			
 			for (int i=0;i<ids.length;i++) {
 				if (!contactMap.containsKey(ids[i])) {
 					throw new IllegalArgumentException();
 				}
 			} 
-			
+					
 			for (int i=0;i<ids.length;i++) {
 				contacts.add(contactMap.get(i)); 
 			}
@@ -368,7 +396,14 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public Set<Contact> getContacts(String name) {
-		Set<Contact> contacts = new HashSet<>();
+//		Set<Contact> contacts = new HashSet<>();
+		
+/*	I could iterate through all contacts list and convert 
+ *	each name which is already an array of characters, 
+ *	into a data structure that allows me to use a method 
+ *	like contains() to search for the string within the name.
+ *		for (int i=0;i<contacts)
+ */
 		try {
 			if (name == null) {
 				throw new NullPointerException();
