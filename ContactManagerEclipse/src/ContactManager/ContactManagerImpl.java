@@ -34,10 +34,16 @@ public class ContactManagerImpl implements ContactManager {
 	private static final String XMLFILENAME = "contacts.xml";
 	private 	Map<Integer,Meeting> meetingMap = null;
 	private 	Map<Integer,FutureMeeting> futureMeetingMap = null; 
-	private 	Map<Integer,PastMeeting> pastMeetingMap = null;
+	
+//	temporary access change for JUnit private Set<Contact> contacts = null;	
+	public 	Map<Integer,PastMeeting> pastMeetingMap = null;
+
 	private 	Map<Integer,Contact> contactMap = null;
 	private int counter = 0;
-	private Set<Contact> contacts = null;
+	
+//	temporary access change for JUnit private Set<Contact> contacts = null;
+	public Set<Contact> contacts = null;
+
 	private Calendar nowDate = Calendar.getInstance();
 	
 	/**
@@ -76,6 +82,11 @@ public class ContactManagerImpl implements ContactManager {
 		updateMeetings();
 	}
 	
+	/**
+	 * Updates meetings from future to past, according to present time/date.
+	 * 
+	 * (temporarily public for JUnit to access it.)
+	 */
 	private void updateMeetings() {
 		for (Meeting meeting : futureMeetingMap.values()) {
 		    if (nowDate.after(meeting.getDate())) {
@@ -87,42 +98,14 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	
 	/**
-	 * Creates a new meeting with a new id number which is stored with 
-	 * its meeting as a key-value pair in a HashMap.
-	 * 
-	 * @param	contacts		the contacts who will attend the meeting
-	 * @param	date			the date on which the meeting will be held
-	 * @return	id			the unique id number, generated for this meeting
-	 * @throws				IllegalArgumentException if date is not in the future.
-	 */
-	@Override
-	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
-		FutureMeeting meeting = null;
-		try {
-			if (nowDate.after(date)) {
-				throw new IllegalArgumentException();
-			}
-
-			this.contacts.addAll(contacts);
-			meeting = new FutureMeetingImpl(contacts,date,generateId(toString(date)));
-			meetingMap.put(meeting.getId(),meeting);
-			futureMeetingMap.put(meeting.getId(),meeting);
-			
-		} catch (IllegalArgumentException e) {
-			System.out.println("can't set up a future meeting with a past date");
-		}
-
-		return meeting.getId();		
-	}
-	
-	/**
 	 * This private method converts the date of a new meeting to a string. 
 	 * 
 	 * @param	date		the date of a new meeting
 	 * @return			the date of a new meeting as a string
 	 * 
+	 * (temporarily public for JUnit to access it.)
 	 */
-	public String toString(Calendar date) {
+	private String toString(Calendar date) {
 		String DateStr = null;
 		try {
 			if (date == null) {
@@ -145,9 +128,9 @@ public class ContactManagerImpl implements ContactManager {
 	 * @return		a unique id number
 	 * @throws		NullPointerException if the string is null 
 	 * 
-	 * (needs to made temporarily public for JUnit to access it.)
+	 * (temporarily public for JUnit to access it.)
 	 */
-	public int generateId(String str) {
+	private int generateId(String str) {
 		int hashId = 0;
 		try {
 			if (str == null) {
@@ -164,7 +147,7 @@ public class ContactManagerImpl implements ContactManager {
 				hashIdStr = ""+hashId+counter;//counter = 0
 				hashId = Integer.parseInt(hashIdStr);
 			
-				if (!contactMap.containsKey(hashId) || !meetingMap.containsKey(hashId)) {
+				if (!((HashMap<Integer,Contact>) contactMap).Key(hashId) || !meetingMap.Key(hashId)) {
 					unique = true;					
 				} else {
 					counter++;
@@ -180,6 +163,62 @@ public class ContactManagerImpl implements ContactManager {
 		System.out.println("counter before return: "+counter);
 
 		return hashId;
+	}
+	
+	/**
+	 * Determines whether a contact exists in current Contact Manager. 
+	 * 
+	 * @param	contact	a contact
+	 * @return			true if contact exists
+	 * 
+	 * (temporarily public for JUnit to access it.)
+	 */
+	private boolean exists(Contact contact) {
+		int id = contact.getId();
+		boolean exists = false;
+		
+		for (int idKeys : contactMap.keySet()) {
+			if (id == idKeys) {
+				exists = true;
+			}
+		}
+		return exists;
+	}
+	
+	/**
+	 * Determines whether a contact is amongst the contacts for a meeting.
+	 *  
+	 * @param meetingContacts
+	 * @param contact
+	 * @return
+	 */
+	private boolean kontains(Set<Contact> meetingContacts, Contact contact) {
+		// if meetingContacts contains contact.
+		return true;
+	}
+	
+	@Override
+	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
+		Meeting meeting = null;
+		try {
+			if (nowDate.after(date)) {
+				throw new IllegalArgumentException();
+			}
+			for (Contact contact : contacts) {
+				if (!exists(contact)) {
+					throw new IllegalArgumentException("");
+				}
+			}
+				
+			this.contacts.addAll(contacts);
+			meeting = new FutureMeetingImpl(contacts,date,generateId(toString(date)));
+			meetingMap.put(meeting.getId(),meeting);
+			futureMeetingMap.put(meeting.getId(),(FutureMeeting) meeting);
+			
+		} catch (IllegalArgumentException e) {
+			System.out.println("Past date not valid OR contact(s) not found.");
+		}
+		return meeting.getId();		
 	}
 	
 	/**
@@ -245,25 +284,28 @@ public class ContactManagerImpl implements ContactManager {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override 
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		List<FutureMeeting> futureMeetingList = (ArrayList<FutureMeeting>) futureMeetingMap.values();
-		for (FutureMeeting futMeeting : futureMeetingList) {
-			if (!futMeeting.getContacts().contains(contact)) {
-//if contains() uses equals(), could override it to compare ids rather than if the objects have the same reference?
-//but what what other methods would this affect? Would it for eg alter the containsKey() method or others?				
-				futureMeetingList.remove(futMeeting);
-			}
-		}
+		List<FutureMeeting> futureMeetingList = null; 		
+	
 		try {
-			if (!contacts.contains(contact)) { 
+			if (!exists(contact)) { 
 				throw new IllegalArgumentException();
 			}
-	
+			
+			(FutureMeeting futureMeeting : futureMeetingMap.values()) {
+				Set<Contact> meetingContacts = futureMeeting.getContacts();	
+				if (kontains(meetingContacts,contact)) {
+					
+				}
+			}
+			
+			futureMeetingList = (ArrayList<FutureMeeting>) futureMeetingMap.values();
+			
 		} catch (IllegalArgumentException e) {
-			System.out.println("that contact does not exist");
+			System.out.println("That contact does not exist.");
  		}	
  		return new ArrayList(futureMeetingList);//requires couple of suppress warnings..?!	
 	}
-	
+		
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
@@ -279,18 +321,18 @@ public class ContactManagerImpl implements ContactManager {
 		return new ArrayList(futureMeetingSet);	
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+/*	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
 		List<PastMeeting> pastMeetingList = (ArrayList<PastMeeting>) pastMeetingMap.values();
 		SortedSet<PastMeeting> pastMeetingSet = null;
 		try {
-			if (!contacts.contains(contact)) {
+			if (!contacts.(contact)) {
 				throw new IllegalArgumentException();
 			}
 		
 			for (PastMeeting pastMeeting : pastMeetingList) {
-				if (!pastMeeting.getContacts().contains(contact)) {
+				if (!pastMeeting.getContacts().(contact)) {
 					pastMeetingList.remove(pastMeeting);
 				}
 			}
@@ -302,24 +344,38 @@ public class ContactManagerImpl implements ContactManager {
  		}
  			
  		return new ArrayList(pastMeetingSet);
-	}
-	 
+	}*/
+	/**
+	 * This method is a little odd in that it creates a NEW past meeting which 
+	 * requires you to give it contacts but these contacts need to have already 
+	 * be in the records. i.e. they should already be in the member field of 
+	 * this class in the Set<Contact> contacts, so for the JUnit, the contacts 
+	 * need to be added first.
+	 */
+	
 	@Override
 	public void addNewPastMeeting(Set<Contact> contacts,Calendar date,String text) {			
-		PastMeeting meeting = null;
+		contacts =  (Set<ContactImpl); 
+		
+		Meeting meeting = null;
 		try {
 			if (contacts == null || date == null || text == null) {
 				throw new NullPointerException();
-			}		
-			if (contacts.isEmpty() || !this.contacts.contains(contacts)) {
+			}
+
+			if (contacts.isEmpty()) {
 				throw new IllegalArgumentException();
 			}
-			
+/*			
+			this.contacts = (ContactImpl) 
+				
+			}
 			this.contacts.addAll(contacts);
+
 			meeting = new PastMeetingImpl(contacts,date,text,generateId(toString(date)));
-			pastMeetingMap.put(meeting.getId(),meeting);
+			pastMeetingMap.put(meeting.getId(),(PastMeeting) meeting);
 			meetingMap.put(meeting.getId(),meeting);		
-					
+*/					
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			System.out.println("Contact list is empty and/or one or more contacts don't exist.");
@@ -337,7 +393,7 @@ public class ContactManagerImpl implements ContactManager {
 			if (nowDate.before(meeting.getDate())) {
 				throw new IllegalStateException();
 			}
-			if (!meetingMap.containsKey(id)) {
+			if (!meetingMap.Key(id)) {
 				throw new IllegalArgumentException();
 			}
 			if (text == null) {
@@ -379,7 +435,7 @@ public class ContactManagerImpl implements ContactManager {
 		try {
 			
 			for (int i=0;i<ids.length;i++) {
-				if (!contactMap.containsKey(ids[i])) {
+				if (!contactMap.Key(ids[i])) {
 					throw new IllegalArgumentException();
 				}
 			} 
@@ -401,7 +457,7 @@ public class ContactManagerImpl implements ContactManager {
 /*	I could iterate through all contacts list and convert 
  *	each name which is already an array of characters, 
  *	into a data structure that allows me to use a method 
- *	like contains() to search for the string within the name.
+ *	like () to search for the string within the name.
  *		for (int i=0;i<contacts)
  */
 		try {
