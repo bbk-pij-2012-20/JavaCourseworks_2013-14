@@ -192,7 +192,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @param contact
 	 * @return
 	 */
-	private boolean kontains(Set<Contact> contacts, Contact contact) {
+	private boolean contains(Set<Contact> contacts, Contact contact) {
 		boolean contains = false;
 		for (Contact c : contacts) {
 			if (c.getId() == contact.getId()) {
@@ -298,7 +298,7 @@ public class ContactManagerImpl implements ContactManager {
 			
 			(FutureMeeting futureMeeting : futureMeetingMap.values()) {
 				Set<Contact> meetingContacts = futureMeeting.getContacts();	
-				if (kontains(meetingContacts,contact)) {
+				if (contains(meetingContacts,contact)) {
 					
 				}
 			}
