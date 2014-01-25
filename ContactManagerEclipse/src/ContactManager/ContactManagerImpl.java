@@ -286,29 +286,25 @@ public class ContactManagerImpl implements ContactManager {
 		return meetingMap.get(id);	
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override 
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		List<FutureMeeting> futureMeetingList = null; 		
+		List<Meeting> meetingList = null; 		
 	
 		try {
 			if (!exists(contact)) { 
 				throw new IllegalArgumentException();
 			}
-			
-			(FutureMeeting futureMeeting : futureMeetingMap.values()) {
-				Set<Contact> meetingContacts = futureMeeting.getContacts();	
-				if (contains(meetingContacts,contact)) {
-					
+		
+			meetingList = new ArrayList<Meeting>();
+			for (FutureMeeting futureMeeting : futureMeetingMap.values()) {
+				if (contains(futureMeeting.getContacts(),contact)) {
+					meetingList.add(futureMeeting);
 				}
 			}
-			
-			futureMeetingList = (ArrayList<FutureMeeting>) futureMeetingMap.values();
-			
 		} catch (IllegalArgumentException e) {
 			System.out.println("That contact does not exist.");
  		}	
- 		return new ArrayList(futureMeetingList);//requires couple of suppress warnings..?!	
+ 		return meetingList;	
 	}
 		
 	@SuppressWarnings({ "unchecked", "rawtypes" })
