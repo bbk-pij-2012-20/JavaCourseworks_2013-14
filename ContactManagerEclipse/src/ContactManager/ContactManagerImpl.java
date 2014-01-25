@@ -288,38 +288,37 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override 
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		List<Meeting> meetingList = null; 		
+		SortedSet<Meeting> meetingSet = null; 
 	
 		try {
 			if (!exists(contact)) { 
 				throw new IllegalArgumentException();
 			}
 		
-			meetingList = new ArrayList<Meeting>();
+			meetingSet = new TreeSet<>();
+			
 			for (FutureMeeting futureMeeting : futureMeetingMap.values()) {
 				if (contains(futureMeeting.getContacts(),contact)) {
-					meetingList.add(futureMeeting);
+					meetingSet.add(futureMeeting);
 				}
 			}
 		} catch (IllegalArgumentException e) {
 			System.out.println("That contact does not exist.");
  		}	
- 		return meetingList;	
+
+		return new ArrayList<>(meetingSet);	
 	}
 		
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		List<FutureMeeting> futureMeetingList = (ArrayList<FutureMeeting>) futureMeetingMap.values();
+		SortedSet<Meeting> meetingSet = new TreeSet<>(); 
 		
-		for (FutureMeeting futMeeting : futureMeetingList) {
-			if (!futMeeting.getDate().equals(date)) {
-				futureMeetingList.remove(futMeeting);
+		for (FutureMeeting futureMeeting : futureMeetingMap.values()) {
+			if (futureMeeting.getDate().equals(date)) {
+				meetingSet.add(futureMeeting);
 			}
 		}
-		SortedSet<FutureMeeting> futureMeetingSet = new TreeSet<>(futureMeetingList); 
-				
-		return new ArrayList(futureMeetingSet);	
+		
+		return new ArrayList<Meeting>(meetingSet);	
 	}
 	
 /*	@SuppressWarnings({ "rawtypes", "unchecked" })
