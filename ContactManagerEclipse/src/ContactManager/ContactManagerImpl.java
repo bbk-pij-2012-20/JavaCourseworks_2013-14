@@ -294,17 +294,21 @@ public class ContactManagerImpl implements ContactManager {
 		SortedSet<Meeting> meetingSet = null; 
 	
 		try {
+			
 			if (!exists(contact)) { 
 				throw new IllegalArgumentException();
 			}
 		
-			meetingSet = new TreeSet<>();
+			meetingSet = new TreeSet<>();//not sure if this will be chronologically sorted yet need to test it.
 			
 			for (FutureMeeting futureMeeting : futureMeetingMap.values()) {
+			
 				if (contains(futureMeeting.getContacts(),contact)) {
 					meetingSet.add(futureMeeting);
 				}
+				
 			}
+			
 		} catch (IllegalArgumentException e) {
 			System.out.println("That contact does not exist.");
  		}	
