@@ -87,7 +87,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * 
 	 * (temporarily public for JUnit to access it.)
 	 */
-	private void updateMeetings() {
+	public void updateMeetings() {
 		for (Meeting meeting : futureMeetingMap.values()) {
 		    if (nowDate.after(meeting.getDate())) {
 		    		PastMeetingImpl pastMeeting = (PastMeetingImpl) meeting;
@@ -105,7 +105,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * 
 	 * (temporarily public for JUnit to access it.)
 	 */
-	private String toString(Calendar date) {
+	public String toString(Calendar date) {
 		String DateStr = null;
 		try {
 			if (date == null) {
@@ -115,7 +115,7 @@ public class ContactManagerImpl implements ContactManager {
 			DateStr = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 	
 		} catch (NullPointerException e) {
-			System.out.println("the input date to toString() was null");
+			System.out.println("The input date to toString() was null.");
 		}
 		return DateStr;		
 	}
@@ -130,7 +130,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * 
 	 * (temporarily public for JUnit to access it.)
 	 */
-	private int generateId(String str) {
+	public int generateId(String str) {
 		int hashId = 0;
 		try {
 			if (str == null) {
@@ -147,20 +147,20 @@ public class ContactManagerImpl implements ContactManager {
 				hashIdStr = ""+hashId+counter;//counter = 0
 				hashId = Integer.parseInt(hashIdStr);
 			
-				if (!((HashMap<Integer,Contact>) contactMap).Key(hashId) || !meetingMap.Key(hashId)) {
+				if (!contactMap.containsKey(hashId) || !meetingMap.containsKey(hashId)) {
 					unique = true;					
 				} else {
 					counter++;
-					System.out.println("counter inside: "+counter);
+//					System.out.println("counter inside: "+counter);
 				}
 			}
-			System.out.println("counter outside: "+counter);
+//			System.out.println("counter outside: "+counter);
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			System.out.println("the input string to generateId() was null");
+			System.out.println("The input string to generateId() was null.");
 		}
-		System.out.println("counter before return: "+counter);
+//		System.out.println("counter before return: "+counter);
 
 		return hashId;
 	}
@@ -173,7 +173,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * 
 	 * (temporarily public for JUnit to access it.)
 	 */
-	private boolean exists(Contact contact) {
+	public boolean exists(Contact contact) {
 		int id = contact.getId();
 		boolean exists = false;
 		
@@ -201,21 +201,32 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		return contains;
 	}
-	
+
+	/**
+	 * I am interpreting the Javadoc of addFutureMeeting() interface stub 
+	 * to mean that this method is not responsible for adding new contacts 
+	 * passed here as an argument. It appears to be assumed that future 
+	 * meetings will not be set up before contacts are added via 
+	 * addNewContact(Contact). 
+	 */
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
 		Meeting meeting = null;
+	
 		try {
+			
 			if (nowDate.after(date)) {
 				throw new IllegalArgumentException();
 			}
+			
 			for (Contact contact : contacts) {
+				
 				if (!exists(contact)) {
 					throw new IllegalArgumentException("");
 				}
+				
 			}
 				
-			this.contacts.addAll(contacts);
 			meeting = new FutureMeetingImpl(contacts,date,generateId(toString(date)));
 			meetingMap.put(meeting.getId(),meeting);
 			futureMeetingMap.put(meeting.getId(),(FutureMeeting) meeting);
@@ -223,6 +234,7 @@ public class ContactManagerImpl implements ContactManager {
 		} catch (IllegalArgumentException e) {
 			System.out.println("Past date not valid OR contact(s) not found.");
 		}
+		
 		return meeting.getId();		
 	}
 	
@@ -235,52 +247,43 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	@Override
 	public PastMeeting getPastMeeting(int id) {
-		PastMeeting pastMeeting = null;
+		Meeting result = null;
+		
 		try {
-			if (id == 0) {
-				pastMeeting = null;
-			} else {
-				pastMeeting = pastMeetingMap.get(id);
-				if (nowDate.before(pastMeeting.getDate())) {
-					throw new IllegalArgumentException();
-				}
-			}
-		} catch (IllegalArgumentException e) {
-			System.out.println("can't get past meeting with id of future meeting");
-		}	
-		return pastMeeting;
-	}
-
-	/**
-	 * Private method to generate unique id number from any string, 
-	 * such as for a new contact or the date of a new meeting.
-	 * 
-	 * @param  id	the id number for a meeting
-	 * @return		the future meeting 
-	 * @throws		IllegalArgumentException if the id is for a past meeting 
-	 * 
-	 */
-	@Override
-	public FutureMeeting getFutureMeeting(int id) {
-		try {
-			if (nowDate.after(futureMeetingMap.get(id).getDate())) {
+		
+			if (nowDate.before(getMeeting(id).getDate())) {
 				throw new IllegalArgumentException();
 			}
+			
+			if (id != 0) {
+				result = meetingMap.get(id);
+			}
+			
 		} catch (IllegalArgumentException e) {
-			System.out.println("can't get future meeting with id of past meeting");
+			System.out.println("can't get past meeting with id of future meeting");
+		}
+		
+		return (PastMeeting) result;  
+	}
+
+	public FutureMeeting getFutureMeeting(int id) {
+		Meeting result = null;
+		
+		try {
+
+			if (nowDate.after(getMeeting(id).getDate())) {
+				throw new IllegalArgumentException();
+			}
+				
+			result = futureMeetingMap.get(id);
+			
+		} catch (IllegalArgumentException e) {
+			System.out.println("Can't get future meeting with id of past meeting.");
 		}	
-		return futureMeetingMap.get(id);
+
+		return (FutureMeeting) result;
 	}
 	
-	/**
-	 * Private method to generate unique id number from any string, 
-	 * such as for a new contact or the date of a new meeting.
-	 * 
-	 * @param  id	the id number for a meeting
-	 * @return		the future meeting 
-	 * @throws		IllegalArgumentException if the id is for a past meeting 
-	 * 
-	 */	
 	@Override
 	public Meeting getMeeting(int id) {
 		return meetingMap.get(id);	
