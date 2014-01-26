@@ -298,8 +298,8 @@ public class ContactManagerImpl implements ContactManager {
 			if (!exists(contact)) { 
 				throw new IllegalArgumentException();
 			}
-		
-			meetingSet = new TreeSet<>();//not sure if this will be chronologically sorted yet need to test it.
+			
+			meetingSet = new TreeSet<>();//not sure if this will be chronologically sorted yet need to test it.		
 			
 			for (FutureMeeting futureMeeting : futureMeetingMap.values()) {
 			
