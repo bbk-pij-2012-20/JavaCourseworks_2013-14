@@ -168,7 +168,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @param	contact	a contact
 	 * @return			true if contact exists
 	 * 
-	 * (temporarily public for JUnit to access it.)
+	 * (Made temporarily public for JUnit to access it.)
 	 */
 	public boolean exists(Contact contact) {
 		int id = contact.getId();
@@ -191,8 +191,9 @@ public class ContactManagerImpl implements ContactManager {
 	 * @param meetingContacts
 	 * @param contact
 	 * @return
+	 * (Made temporarily public for JUnit to access it.)
 	 */
-	private boolean contains(Set<Contact> contacts, Contact contact) {
+	public boolean contains(Set<Contact> contacts, Contact contact) {
 		boolean contains = false;
 	
 		for (Contact kontact : contacts) {
@@ -205,7 +206,7 @@ public class ContactManagerImpl implements ContactManager {
 		
 		return contains;
 	}
-
+	
 	/**
 	 * I am interpreting the Javadoc of addFutureMeeting() interface stub 
 	 * to mean that this method is not responsible for adding new contacts 
@@ -471,12 +472,6 @@ public class ContactManagerImpl implements ContactManager {
 	public Set<Contact> getContacts(String name) {
 		Set<Contact> contacts = new HashSet<>();
 		
-/*	I could iterate through all contacts list and convert 
- *	each name which is already an array of characters, 
- *	into a data structure that allows me to use a method 
- *	like () to search for the string within the name.
- *	for (int i=0;i<contacts)
- */
 		try {
 			
 			if (name == null) {
@@ -485,13 +480,13 @@ public class ContactManagerImpl implements ContactManager {
 			
 			for (Contact contact : contactMap.values()) {
 			
-				if (contact.getName().equals(name)) {
+				if (contact.getName().toLowerCase().contains(name.toLowerCase())) {
 					contacts.add(contact);
 				}
 				
 			}
 		} catch (NullPointerException e) {
-			System.out.println("you gave no name");
+			System.out.println("No name was given.");
 		}
 		
 		return contacts;
