@@ -35,15 +35,20 @@ public class ContactManagerImpl implements ContactManager {
 	private 	Map<Integer,Meeting> meetingMap = null;
 	private 	Map<Integer,FutureMeeting> futureMeetingMap = null; 
 	private 	Map<Integer,PastMeeting> pastMeetingMap = null;
-	private 	Map<Integer,Contact> contactMap = null;
+	public 	Map<Integer,Contact> contactMap = null;
 	private int counter = 0;
 	private Calendar nowDate = Calendar.getInstance();
 	
+	public static void main(String[] args) {
+		new ContactManagerImpl();
+	}
+	
 	/**
 	 * This constructs a ContactManager with no parameters.
-	 * It reads an xml file called "ContactManager.xml" from 
-	 * the current directory, reads it in and converts it 
-	 * into an object of ContactManagerImpl.  
+	 * It looks for "ContactManager.xml" file on current directory. 
+	 * If not found, it makes one. If found, it reads it in from 
+	 * the current directory and converts it into an object of 
+	 * ContactManagerImpl. The object should consist of   
 	 */
 	@SuppressWarnings("unchecked")
 	public ContactManagerImpl() {
@@ -53,6 +58,7 @@ public class ContactManagerImpl implements ContactManager {
 			futureMeetingMap = new HashMap<Integer,FutureMeeting>();
 			pastMeetingMap = new HashMap<Integer,PastMeeting>();
 			contactMap = new HashMap<Integer,Contact>();
+			counter = 0;
 		} else {
 			XMLDecoder decode = null;
 		
@@ -65,8 +71,9 @@ public class ContactManagerImpl implements ContactManager {
 				futureMeetingMap = (Map<Integer,FutureMeeting>) decode.readObject();
 				pastMeetingMap = (Map<Integer,PastMeeting>) decode.readObject();
 				contactMap = (Map<Integer,Contact>) decode.readObject();
-					
-				decode.close();// do I need the close() at all ...???
+				counter = (int) decode.readObject();
+
+			//	decode.close();// do I need the close() at all ...???
 
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -209,10 +216,10 @@ public class ContactManagerImpl implements ContactManager {
 	
 	/**
 	 * I am interpreting the Javadoc of addFutureMeeting() interface stub 
-	 * to mean that this method is not responsible for adding new contacts 
-	 * passed here as an argument. It appears to be assumed that future 
-	 * meetings will not be set up before contacts are added via 
-	 * addNewContact(Contact). 
+	 * to mean that this method is not responsible for adding any new 
+	 * contacts, passed here as an argument. 
+	 * It is assumed, therefore, that future meetings will not be set up 
+	 * before contacts are explicitly added via addNewContact(Contact). 
 	 */
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts,Calendar date) {
@@ -243,13 +250,6 @@ public class ContactManagerImpl implements ContactManager {
 		return meeting.getId();		
 	}
 	
-	/**
-	 * Get a past meeting with the unique.
-	 * 
-	 * @param	id	unique id for a meeting 
-	 * @return		a past meeting
-	 * 
-	 */
 	@Override
 	public PastMeeting getPastMeeting(int id) {
 		Meeting result = null;
@@ -271,6 +271,7 @@ public class ContactManagerImpl implements ContactManager {
 		return (PastMeeting) result;  
 	}
 
+	@Override
 	public FutureMeeting getFutureMeeting(int id) {
 		Meeting result = null;
 		
@@ -321,6 +322,7 @@ public class ContactManagerImpl implements ContactManager {
 		return new ArrayList<>(meetingSet);	
 	}
 		
+	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
 		SortedSet<Meeting> meetingSet = new TreeSet<>(); 
 		
@@ -363,11 +365,8 @@ public class ContactManagerImpl implements ContactManager {
 	}	
 	
 	/**
-	 * This method is a little odd in that it creates a NEW past meeting which 
-	 * requires you to give it contacts but these contacts need to have already 
-	 * be in the records. i.e. they should already be in the member field of 
-	 * this class in the Set<Contact> contacts, so for the JUnit, the contacts 
-	 * need to be added first.
+	 * As with addFutureMeeting, I am making the assumption that the user
+	 * knows to add new contacts first, before adding new past meetings. 
 	 */
 	@Override
 	public void addNewPastMeeting(Set<Contact> contacts,Calendar date,String text) {				
@@ -425,6 +424,10 @@ public class ContactManagerImpl implements ContactManager {
 		}
 	}
 	
+	/**
+	 * I am assuming that this method is a suitable place for 
+	 * generating a contacts unique id. 
+	 */
 	@Override
 	public void addNewContact(String name, String notes) {		
 		Contact contact = null;
@@ -436,7 +439,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			
 			contact = new ContactImpl(name,notes,generateId(name));
-			contactMap.put(generateId(name),contact);
+			contactMap.put(contact.getId(),contact);
 		
 		} catch (Exception e) {
 			System.out.println("No name and/or no notes were given.");
