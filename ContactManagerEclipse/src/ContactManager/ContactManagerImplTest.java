@@ -16,68 +16,52 @@ import java.util.HashMap;
 public class ContactManagerImplTest {
 	
 	private Calendar someFutureDate;
-
 	private Calendar somePastDate;
 	private Set<Contact> someContacts;
 	private String someText;
-
 	private ContactManagerImpl cmi; 
-	
-	private Meeting meeting;
-//	private Map<Integer,Contact> contactMap;
-		
-//	*NB: cmi needs to be the Impl because toString(date) and 
+//	*NB: cmi is ..Impl 'cause toString(date) and 
 //	generateId() are not in the interface.
 	
 	@Before
 	public void setUp() throws Exception {
 		someFutureDate = new GregorianCalendar(2014,11,15);
-
 		somePastDate = new GregorianCalendar(1974,11,15);
 		someContacts = new HashSet<>();
-//		someContacts.add(new ContactImpl("bob"));
-//		someContacts.add(new ContactImpl("mac"));
-//		someContacts.add(new ContactImpl("mac"));
 		someText = "I need a haircut";
-		
 		cmi = new ContactManagerImpl();
-
-		meeting = new PastMeetingImpl();
-	
-//		contactMap = new HashMap<>();
-	
 	}
-
 	/**
-	 * Having created a new past meeting with its id, these are held in the 
-	 * pastMeetingMap. To get access to the meeting, I have to iterate through
-	 * the pastMeetingMap and get the id number, which I can use to assign the 
-	 * associated value to the expectedOutput. It seems a rather round-about 
-	 * way of doing things but not sure how else to do this.
+	 * This test gets the meeting after calling two other 
+	 * methods: addNewContact() and addNewPastingMeeting().
+	 * The test only passes when I comment out parts of the
+	 * ContactManagerImpl constructor related to the file
+	 * reading in. Instead the maps are initialised. 
 	 */
-/*	@Test
+	@Test
 	public void testGetPastMeeting() {				
-		PastMeeting actualOutput = null;
-		
-		for (Contact contact : someContacts) {
-			cmi.addNewContact(contact.getName(),someText);
+		String name = "Bob John";
+		String name2 = "Jon Bob";
+		String notes = "yeah but no";
+		String notes2 = "no but yeah";
+		cmi.addNewContact(name,notes);
+		cmi.addNewContact(name2,notes2);
+		for (Contact contact : cmi.contactMap.values()) {
+			someContacts.add(contact);
 		}
-		for (Contact contact : cmi.contacts) {
-			System.out.println("contacts not empty! :" +contact.getName()+", text: "+contact.getNotes());
-		}
+		cmi.counter = 0;
 		cmi.addNewPastMeeting(someContacts,somePastDate,someText);
-		
+		String actualOutput = null;	
 		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
-			if (entry.getValue().equals(meeting)) {
-				int id = entry.getKey();
-				actualOutput = cmi.pastMeetingMap.get(id);
+			if (entry.getKey() == 975770) {
+				Calendar date = (entry.getValue().getDate());
+				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 			}
 		}
-
-		PastMeeting expectedOutput = (PastMeeting) meeting;
+		String expectedOutput = "19741115";
 		assertEquals(expectedOutput,actualOutput);	
 	}
-*/
+
 	@After
 	public void tearDown() throws Exception {
 //		cmi = null;
@@ -182,6 +166,11 @@ public class ContactManagerImplTest {
 		fail("Not yet implemented");
 	}
 	
+	/*
+	 * The test works when the accessibility of contactMap in
+	 * ContactManagerImpl is temporarily changed to anything
+	 * other than private.
+	 */
  	@Test
 	public void testAddNewContact() {
  		String name = "Bob John";//with counter=0, id = 499100;
