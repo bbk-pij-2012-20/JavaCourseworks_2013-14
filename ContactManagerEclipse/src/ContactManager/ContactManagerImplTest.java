@@ -18,8 +18,10 @@ public class ContactManagerImplTest {
 	private Calendar someFutureDate;
 	private Calendar somePastDate;
 	private Set<Contact> someContacts;
+	private Set<Contact> someNonContacts;
 	private String someText;
 	private ContactManagerImpl cmi; 
+	private Contact nonContact; 
 //	*NB: cmi is ..Impl 'cause toString(date) and 
 //	generateId() are not in the interface.
 	
@@ -28,9 +30,26 @@ public class ContactManagerImplTest {
 		someFutureDate = new GregorianCalendar(2014,11,15);
 		somePastDate = new GregorianCalendar(1974,11,15);
 		someContacts = new HashSet<>();
-		someText = "I need a haircut";
+		someNonContacts = new HashSet<>();
+		someText = "new past meeting notes";
+		
 		cmi = new ContactManagerImpl();
+		cmi.meetingMap = new HashMap<>();
+		cmi.futureMeetingMap = new HashMap<>();
+		cmi.pastMeetingMap = new HashMap<>();
+		cmi.contactMap = new HashMap<>();		
+
+		String name = "Bob John";
+		String name2 = "Jon Bob";
+		String notes = "yeah but no";
+		String notes2 = "no but yeah";
+		cmi.addNewContact(name,notes);
+		cmi.addNewContact(name2,notes2);
+		String name3 = "noone";
+		String notes3 = "non contact";
+		nonContact = new ContactImpl(name3);
 	}
+	
 	/**
 	 * This test gets the meeting after calling two other 
 	 * methods: addNewContact() and addNewPastingMeeting().
@@ -40,12 +59,6 @@ public class ContactManagerImplTest {
 	 */
 	@Test
 	public void testGetPastMeeting() {				
-		String name = "Bob John";
-		String name2 = "Jon Bob";
-		String notes = "yeah but no";
-		String notes2 = "no but yeah";
-		cmi.addNewContact(name,notes);
-		cmi.addNewContact(name2,notes2);
 		for (Contact contact : cmi.contactMap.values()) {
 			someContacts.add(contact);
 		}
@@ -68,11 +81,29 @@ public class ContactManagerImplTest {
 	}
 
 	@Test
-	public void testAddFutureMeeting() {
-//		int expectedOutput = 975771;//* is id for 15/12/74 - correctly causes exception.
-//		int actualOutput = cmi.addFutureMeeting(someContacts,somePastDate);//*
+	public void testAddFutureMeeting() {		
+		cmi.counter = 0;
+		someNonContacts.add(nonContact);
+		for (Contact contact : cmi.contactMap.values()) {
+			someContacts.add(contact);
+		}
+		
+/*		int actualOutput = cmi.addFutureMeeting(someNonContacts,someFutureDate);
+ *		int expectedOutput = 328270;//328270 = id for 15/12/14 
+ * 
+ * The 2 lines above correctly throws exception as one of the contacts not found in contactMap,
+ * it was added directly through the ContactImpl(String name) constructor rather than via 
+ * addNewContact().
+ */
+ 
+/*		int actualOutput = cmi.addFutureMeeting(someContacts,somePastDate);
+ *		int expectedOutput = 975770; // 975770 = id for 15/12/74
+ * 
+ * The 2 lines above correctly throws exception as the date is in the past rather than in 
+ * future.
+ */
 
-		int expectedOutput = 328271;
+		int expectedOutput = 328270; 
 		int actualOutput = cmi.addFutureMeeting(someContacts,someFutureDate);
 		assertEquals(expectedOutput,actualOutput);
 	}
