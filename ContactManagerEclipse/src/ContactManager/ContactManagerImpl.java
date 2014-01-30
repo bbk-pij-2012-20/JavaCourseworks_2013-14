@@ -28,7 +28,7 @@ import java.io.FileOutputStream;
  * It holds all contacts in a HashSet. 
  * 
  * @author Shahin Zibaee 30th Jan 2014
- *
+ * 
  */
 public class ContactManagerImpl implements ContactManager {
 	private static final String XMLFILENAME = "contacts.xml";
