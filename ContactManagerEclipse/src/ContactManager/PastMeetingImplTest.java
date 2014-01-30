@@ -22,7 +22,7 @@ public class PastMeetingImplTest {
 	private int id = 0;
 	private Calendar date = Calendar.getInstance();
 	private Set<Contact> contacts = null;
-	private Meeting meeting;
+	private Meeting meeting = null;
 
 	private String notes = "";
 	private PastMeeting pastMeeting = null;
@@ -40,7 +40,8 @@ public class PastMeetingImplTest {
 	
 		notes = "are fighting again";
 		pastMeeting = new PastMeetingImpl(contacts,date,notes,id);
-		meeting = (MeetingImpl) pastMeeting;
+//		meeting = (MeetingImpl) pastMeeting; //downcast only necessary when I'd forgotten to extend the interface
+		meeting = pastMeeting;
 	}
 
 	/**

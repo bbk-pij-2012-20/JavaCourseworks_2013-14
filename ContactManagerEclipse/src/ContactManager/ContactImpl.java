@@ -31,6 +31,7 @@ public class ContactImpl implements Contact {
 	 * 
 	 * @param name	the full name of the contact, e.g. "Shahin Zibaee" 
 	 * 
+	 * (IS THIS METHOD USED OTHER THAN IN TEST?)
 	 */
 	public ContactImpl(String name) {
 		this.name = name;
@@ -48,7 +49,7 @@ public class ContactImpl implements Contact {
 	}
 	
 	/**
-	 * This is an empty constructor.
+	 * An empty constructor.
 	 */
 	public ContactImpl(){}
 	

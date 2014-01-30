@@ -10,12 +10,17 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting,Serializ
 	
 	public PastMeetingImpl(Set<Contact> contacts,Calendar date,String text,int id) {
 		super(contacts,date,id);
-		notes = text;
+		notes += text;
 	}
 	
 	public PastMeetingImpl(String text) {
-		notes = text;
+		notes += text;
 	}
+	
+	/**
+	 * An empty constructor.
+	 */
+	public PastMeetingImpl(){}
 	
 	@Override
 	public String getNotes() {

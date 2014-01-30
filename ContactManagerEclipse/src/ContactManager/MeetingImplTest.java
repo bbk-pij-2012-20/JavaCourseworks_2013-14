@@ -14,7 +14,7 @@ public class MeetingImplTest {
 	private int id = 0;
 	private Calendar date = Calendar.getInstance();
 	private Set<Contact> contacts = null;
-	private MeetingImpl meeting = null;
+	private Meeting meeting = null;
 	
 	@Before
 	public void setUp() throws Exception {

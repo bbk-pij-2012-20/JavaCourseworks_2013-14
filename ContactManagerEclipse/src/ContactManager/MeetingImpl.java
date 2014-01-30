@@ -10,10 +10,9 @@ public class MeetingImpl implements Meeting,Serializable {
 	
 	private int id;
 	private Calendar date;
-	private Set<Contact> contacts = null;
+	private Set<Contact> contacts;
 
 	public MeetingImpl(Set<Contact> contacts,Calendar date, int id) {
-		this.contacts = new HashSet<>();
 		setContacts(contacts);
 		setDate(date);
 		this.id = id;
@@ -40,7 +39,7 @@ public class MeetingImpl implements Meeting,Serializable {
 	 * @param contacts	one or more contacts 
 	 */
 	private void setContacts(Set<Contact> contacts) {
-		this.contacts = contacts;
+		this.contacts = new HashSet<>(contacts);
 	}
 		
 	@Override

@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ContactImplTest {
-	private ContactImpl contact;
+	private Contact contact;
 	private String name;
 	private int id;
 	private String note;

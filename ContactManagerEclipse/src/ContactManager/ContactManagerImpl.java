@@ -27,7 +27,7 @@ import java.io.FileOutputStream;
  * all meetings paired with their id numbers in HashMaps. 
  * It holds all contacts in a HashSet. 
  * 
- * @author Shahin Zibaee 24th Jan 2014
+ * @author Shahin Zibaee 30th Jan 2014
  *
  */
 public class ContactManagerImpl implements ContactManager {
