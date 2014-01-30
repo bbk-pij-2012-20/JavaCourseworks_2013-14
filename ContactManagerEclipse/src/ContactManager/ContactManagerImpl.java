@@ -32,28 +32,30 @@ import java.io.FileOutputStream;
  */
 public class ContactManagerImpl implements ContactManager {
 	private static final String XMLFILENAME = "contacts.xml";
-	private 	Map<Integer,Meeting> meetingMap = null;
-	private 	Map<Integer,FutureMeeting> futureMeetingMap = null; 
-	private 	Map<Integer,PastMeeting> pastMeetingMap = null;
-	public 	Map<Integer,Contact> contactMap = null;
-	private int counter = 0;
+	Map<Integer,Meeting> meetingMap = null;
+	Map<Integer,FutureMeeting> futureMeetingMap = null; 
+	Map<Integer,PastMeeting> pastMeetingMap = null;
+ 	Map<Integer,Contact> contactMap = null;
+	int counter = 0;
 	private Calendar nowDate = Calendar.getInstance();
 	
-	public static void main(String[] args) {
-		new ContactManagerImpl();
-	}
-	
+//	public static void main(String[] args) {	
+//		new ContactManagerImpl().flush();
+//	}
 	/**
 	 * This constructs a ContactManager with no parameters.
 	 * It looks for "ContactManager.xml" file on current directory. 
 	 * If not found, it makes one. If found, it reads it in from 
 	 * the current directory and converts it into an object of 
-	 * ContactManagerImpl. The object should consist of   
+	 * ContactManagerImpl. The object should consist of 4 hashmaps
+	 * and an integer called counter. 
+	 * 
+	 * (Based on KLM example code.)   
 	 */
 	@SuppressWarnings("unchecked")
 	public ContactManagerImpl() {
 	
-		if (!new File(XMLFILENAME).exists()) {
+/*		if (!new File(XMLFILENAME).exists()) {
 			meetingMap = new HashMap<Integer,Meeting>();
 			futureMeetingMap = new HashMap<Integer,FutureMeeting>();
 			pastMeetingMap = new HashMap<Integer,PastMeeting>();
@@ -77,15 +79,16 @@ public class ContactManagerImpl implements ContactManager {
 
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+				System.out.println("File not found. (constructor)");
 			}
 		}
 		
 		updateMeetings();
-	}
+*/	}
 	
 	/**
-	 * Updates meetings from future to past, according to present time/date.
-	 * 
+	 * This private method updates meetings from future to past, 
+	 * according to present time/date. 
 	 * (temporarily public for JUnit to access it.)
 	 */
 	public void updateMeetings() {
@@ -100,11 +103,10 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	
 	/**
-	 * This private method converts the date of a new meeting to a string. 
+	 * This private method converts the date of a new meeting into a string. 
 	 * 
 	 * @param	date		the date of a new meeting
-	 * @return			the date of a new meeting as a string
-	 * 
+	 * @return			the date of a new meeting as a string 
 	 * (temporarily public for JUnit to access it.)
 	 */
 	public String toString(Calendar date) {
@@ -119,25 +121,24 @@ public class ContactManagerImpl implements ContactManager {
 			DateStr = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 	
 		} catch (NullPointerException e) {
-			System.out.println("The input date to toString() was null.");
+			System.out.println("The input date to toString() was null (Method: toString(Calendar)).");
 		}
 		
 		return DateStr;		
 	}
 	
 	/**
-	 * Private method to generate unique id number from any string, 
+	 * This private method generates a unique id number from any string, 
 	 * such as for a new contact or the date of a new meeting.
 	 * 
 	 * @param  str	a contact or date in string format
 	 * @return		a unique id number
 	 * @throws		NullPointerException if the string is null 
-	 * 
 	 * (temporarily public for JUnit to access it.)
 	 */
 	public int generateId(String str) {
 		int hashId = 0;
-	
+		
 		try {
 		
 			if (str == null) {
@@ -146,35 +147,37 @@ public class ContactManagerImpl implements ContactManager {
 
 			Long hashIdLong = (long) Math.abs(str.hashCode());
 			hashId = (int) (hashIdLong%100000);
-
-			String hashIdStr = null;
+		
 			boolean unique = false;
+			int potentiallyUniqueId = 0;
 			
 			while (!unique) {
-				hashIdStr = ""+hashId+counter;//counter = 0
-				hashId = Integer.parseInt(hashIdStr);
-			
-				if (!contactMap.containsKey(hashId) || !meetingMap.containsKey(hashId)) {
+				potentiallyUniqueId = Integer.parseInt(""+hashId+counter);
+				
+				if (!contactMap.containsKey(potentiallyUniqueId) && !meetingMap.containsKey(potentiallyUniqueId)) {
 					unique = true;					
+				
 				} else {
 					counter++;
 				}
 			}
+			
+			hashId = potentiallyUniqueId;
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			System.out.println("The input string to generateId() was null.");
+			System.out.println("The input string to generateId() was null (Method: generateId()).");
 		}
-
+		
 		return hashId;
 	}
 	
 	/**
-	 * Determines whether a contact exists in current Contact Manager. 
+	 * This private method determines whether a contact exists in 
+	 * the current Contact Manager. 
 	 * 
 	 * @param	contact	a contact
 	 * @return			true if contact exists
-	 * 
 	 * (Made temporarily public for JUnit to access it.)
 	 */
 	public boolean exists(Contact contact) {
@@ -193,11 +196,12 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	
 	/**
-	 * Determines whether a contact is amongst the contacts for a meeting.
+	 * This private method determines whether a contact is amongst the 
+	 * contacts for a meeting.
 	 *  
-	 * @param meetingContacts
-	 * @param contact
-	 * @return
+	 * @param contacts	a list of contacts
+	 * @param contact	a contact
+	 * @return			true if the contact is in the list of contacts
 	 * (Made temporarily public for JUnit to access it.)
 	 */
 	public boolean contains(Set<Contact> contacts, Contact contact) {
@@ -244,7 +248,7 @@ public class ContactManagerImpl implements ContactManager {
 			futureMeetingMap.put(meeting.getId(),(FutureMeeting) meeting);
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("Past date not valid OR contact(s) not found.");
+			System.out.println("Past date not valid OR contact(s) not found (Method: addFutureMeeting()).");
 		}
 		
 		return meeting.getId();		
@@ -265,7 +269,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("Cannot get past meeting with id of future meeting.");
+			System.out.println("Cannot get past meeting using the id of a future meeting. (Method: getPastMeeting()).");
 		}
 		
 		return (PastMeeting) result;  
@@ -284,7 +288,7 @@ public class ContactManagerImpl implements ContactManager {
 			result = futureMeetingMap.get(id);
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("Cannot get future meeting with id of past meeting.");
+			System.out.println("Cannot get future meeting using the id of a past meeting. (Method: getFutureMeeting()).");
 		}	
 
 		return (FutureMeeting) result;
@@ -316,7 +320,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("That contact does not exist.");
+			System.out.println("That contact does not exist. (Method: getFutureMeetingList()).");
  		}	
 
 		return new ArrayList<>(meetingSet);	
@@ -358,7 +362,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("That contact does not exist.");
+			System.out.println("That contact does not exist. (Method: getPastMeetingList()).");
  		}	
 		
 		return new ArrayList<>(meetingSet);
@@ -366,7 +370,8 @@ public class ContactManagerImpl implements ContactManager {
 	
 	/**
 	 * As with addFutureMeeting, I am making the assumption that the user
-	 * knows to add new contacts first, before adding new past meetings. 
+	 * knows to add new contacts first via addNewContact() before adding 
+	 * new past meetings. 
 	 */
 	@Override
 	public void addNewPastMeeting(Set<Contact> contacts,Calendar date,String text) {				
@@ -391,9 +396,9 @@ public class ContactManagerImpl implements ContactManager {
 			meetingMap.put(meeting.getId(),meeting);		
 					
 		} catch (IllegalArgumentException e) {
-			System.out.println("Contact list is empty and/or one or more contacts don't exist.");
+			System.out.println("Contact list is empty and/or one or more contacts don't exist. (Method: addNewPastMeeting()).");
 		} catch (NullPointerException e) {
-			System.out.println("One or more of contacts/date/text is null.");
+			System.out.println("One or more of contacts/date/text is null. (Method: addNewPastMeeting()).");
 		}
 	}
 	
@@ -416,17 +421,17 @@ public class ContactManagerImpl implements ContactManager {
 			new PastMeetingImpl(text);
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("A meeting with that id does not exist.");
+			System.out.println("A meeting with that id does not exist. (Method: addMeetingNotes).");
 		} catch (IllegalStateException e) {
-			System.out.println("Cannot add notes to a meeting that has not yet happened.");
+			System.out.println("Cannot add notes to a meeting that has not yet happened. (Method: addMeetingNotes).");
 		} catch (NullPointerException e) {
-			System.out.println("Cannot add empty notes.");			
+			System.out.println("Cannot add empty notes. (Method: addMeetingNotes).");			
 		}
 	}
 	
 	/**
 	 * I am assuming that this method is a suitable place for 
-	 * generating a contacts unique id. 
+	 * generating a contact's unique id. 
 	 */
 	@Override
 	public void addNewContact(String name, String notes) {		
@@ -438,11 +443,11 @@ public class ContactManagerImpl implements ContactManager {
 				throw new NullPointerException();
 			}
 			
-			contact = new ContactImpl(name,notes,generateId(name));
+			contact = new ContactImpl(name,notes,generateId(name.toLowerCase()));
 			contactMap.put(contact.getId(),contact);
 		
 		} catch (Exception e) {
-			System.out.println("No name and/or no notes were given.");
+			System.out.println("No name and/or no notes were given. (Method: addNewContact()");
 		}
 	}
 
@@ -465,7 +470,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			
 		} catch (IllegalArgumentException e) {
-			System.out.println("No contact(s) correspond(s) to that/those id number(s).");
+			System.out.println("No contact(s) correspond(s) to that/those id number(s). (Method: getContacts(int.. ids)");
 		}
 		
 		return contacts;
@@ -489,19 +494,16 @@ public class ContactManagerImpl implements ContactManager {
 				
 			}
 		} catch (NullPointerException e) {
-			System.out.println("No name was given.");
+			System.out.println("No name was given. (Method: getContacts(String))");
 		}
 		
 		return contacts;
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public void flush() { 
-
 		XMLEncoder encode = null; 
+		
 		try {
 			encode = new XMLEncoder(
 						new BufferedOutputStream(
@@ -514,6 +516,7 @@ public class ContactManagerImpl implements ContactManager {
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			System.out.println("File not found. (Method: flush())");
 		}
 		
 		encode.close();// do I need this close() either ???
