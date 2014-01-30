@@ -54,6 +54,11 @@ public class ContactManagerImplTest {
 		}
 	}
 	
+	@After
+	public void tearDown() throws Exception {
+		cmi = null;
+	}
+	
 	/**
 	 * This test gets the meeting after calling two other 
 	 * methods: addNewContact() and addNewPastingMeeting().
@@ -68,17 +73,12 @@ public class ContactManagerImplTest {
 		String actualOutput = null;	
 		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
 			if (entry.getKey() == 975770) {
-				Calendar date = entry.getValue().getDate();
+				Calendar date = cmi.getPastMeeting(entry.getKey()).getDate();
 				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 			}
 		}
 		String expectedOutput = "19741115";
 		assertEquals(expectedOutput,actualOutput);	
-	}
-
-	@After
-	public void tearDown() throws Exception {
-//		cmi = null;
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class ContactManagerImplTest {
 		String actualOutput = null;	
 		for (Entry<Integer, FutureMeeting> entry : cmi.futureMeetingMap.entrySet()) {
 			if (entry.getKey() == 328270) {
-				Calendar date = entry.getValue().getDate();
+				Calendar date = cmi.getFutureMeeting(entry.getKey()).getDate();
 				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 			}
 		}
@@ -189,16 +189,27 @@ public class ContactManagerImplTest {
 	public void testGetMeeting() {
 		cmi.counter = 0;
 		cmi.addFutureMeeting(someContacts,someFutureDate);
-		String actualOutput = null;	
+		String actualOutput1 = null;	
 		for (Entry<Integer, FutureMeeting> entry : cmi.futureMeetingMap.entrySet()) {
 			if (entry.getKey() == 328270) {
-				Calendar date = entry.getValue().getDate();
-				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+				Calendar date = cmi.getMeeting(entry.getKey()).getDate();
+				actualOutput1 = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 			}
 		}
-		String expectedOutput = "20141115";
-		assertEquals(expectedOutput,actualOutput);	
+		String expectedOutput1 = "20141115";
+		assertEquals(expectedOutput1,actualOutput1);	
 		
+		cmi.counter = 0;
+		cmi.addNewPastMeeting(someContacts,somePastDate,someText);
+		String actualOutput2 = null;	
+		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
+			if (entry.getKey() == 975770) {
+				Calendar date = cmi.getMeeting(entry.getKey()).getDate();
+				actualOutput2 = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+			}
+		}
+		String expectedOutput2 = "19741115";
+		assertEquals(expectedOutput2,actualOutput2);	
 	}
 
 	/*	@Test
