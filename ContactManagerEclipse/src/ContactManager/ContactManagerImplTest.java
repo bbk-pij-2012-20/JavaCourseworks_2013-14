@@ -46,7 +46,9 @@ public class ContactManagerImplTest {
 		cmi.addNewContact(name,notes);
 		cmi.addNewContact(name2,notes2);
 		String name3 = "noone";
-		String notes3 = "non contact";
+		for (Contact contact : cmi.contactMap.values()) {
+			someContacts.add(contact);
+		}
 		nonContact = new ContactImpl(name3);
 	}
 	
@@ -59,9 +61,6 @@ public class ContactManagerImplTest {
 	 */
 	@Test
 	public void testGetPastMeeting() {				
-		for (Contact contact : cmi.contactMap.values()) {
-			someContacts.add(contact);
-		}
 		cmi.counter = 0;
 		cmi.addNewPastMeeting(someContacts,somePastDate,someText);
 		String actualOutput = null;	
@@ -79,17 +78,14 @@ public class ContactManagerImplTest {
 	public void tearDown() throws Exception {
 //		cmi = null;
 	}
-
+/*-reverse
 	@Test
 	public void testAddFutureMeeting() {		
 		cmi.counter = 0;
 		someNonContacts.add(nonContact);
-		for (Contact contact : cmi.contactMap.values()) {
-			someContacts.add(contact);
-		}
 		
 /*		int actualOutput = cmi.addFutureMeeting(someNonContacts,someFutureDate);
- *		int expectedOutput = 328270;//328270 = id for 15/12/14 
+ *		int expectedOutput = 328270; // 328270 = id for 15/12/14 
  * 
  * The 2 lines above correctly throws exception as one of the contacts not found in contactMap,
  * it was added directly through the ContactImpl(String name) constructor rather than via 
@@ -102,49 +98,86 @@ public class ContactManagerImplTest {
  * The 2 lines above correctly throws exception as the date is in the past rather than in 
  * future.
  */
-
+/*-reverse
 		int expectedOutput = 328270; 
 		int actualOutput = cmi.addFutureMeeting(someContacts,someFutureDate);
 		assertEquals(expectedOutput,actualOutput);
 	}
-	
+reverse-*/ 
 	/**
-	 * testing generateId() with name string inputs
+	 * Testing with name string as inputs. In order to 
+	 * test this method directly (i.e. not via the addNewContact() 
+	 * or addNewMeeting() methods), the visibility of the private
+	 * method is changed and then the generateId() method is first
+	 * called and then the contact and key are put in directly.
+	 * This is to show that generateId() checks the hashmaps for
+	 * pre-existing id numbers, which prompt a counter increment.
 	 */
 	@Test
 	public void testGenerateId() {		
-		int expectedOutput1 = 977170;
-		int expectedOutput2 = 78550;
-//		int expectedOutput3 = 78551;
-		int actualOutput1 = cmi.generateId("bob");		
-		int actualOutput2 = cmi.generateId("mac");
-//		int actualOutput3 = cmi.generateId("mac");//a 2nd mac
+		cmi.counter = 0;
+		int expectedOutput1 = 977170;//"bob"
+		int expectedOutput2 = 78550;//"mac"
+		int expectedOutput3 = 78551;//"mac" again
+		
+		String name = "bob";
+		String name2 = "Mac";
+		String name3 = "mac";
+		
+		int actualOutput1 = cmi.generateId(name.toLowerCase());		
+		cmi.contactMap.put(977170,new ContactImpl(name.toLowerCase()));
+		int actualOutput2 = cmi.generateId(name2);
+		cmi.contactMap.put(78550,new ContactImpl(name2.toLowerCase()));
+		int actualOutput3 = cmi.generateId(name3.toLowerCase());//a 2nd mac
+		
 		assertEquals(expectedOutput1,actualOutput1);
 		assertEquals(expectedOutput2,actualOutput2);
-//		assertEquals(expectedOutput2,actualOutput2);
+		assertEquals(expectedOutput3,actualOutput3);
 	}
 	
 	/**
-	 * testing generateId() with Calendar date inputs
+	 * Testing with name string as inputs. In order to 
+	 * test this method directly (i.e. not via the addNewContact() 
+	 * or addNewMeeting() methods), the visibility of the private
+	 * method is changed and then the generateId() method is first
+	 * called and then the contact and key are put in directly.
+	 * This is to show that generateId() checks the hashmaps for
+	 * pre-existing id numbers, which prompt a counter increment.
 	 */
 	@Test
 	public void testGenerateId2() {
-		int expectedOutput1 = 328271;//future date 2014,11,15
-		int expectedOutput2 = 975771;//past date 1974,11,15
-		System.out.println("toString(futureDate)"+cmi.toString(someFutureDate));
+		cmi.counter = 0;
+		int expectedOutput1 = 328270;//future date 2014,11,15
+		int expectedOutput2 = 975770;//past date 1974,11,15
+		int expectedOutput3 = 975771;//past date 1974,11,15 again
 	
 		int actualOutput1 = cmi.generateId(cmi.toString(someFutureDate));
+		cmi.meetingMap.put(328270,new MeetingImpl());
 		int actualOutput2 = cmi.generateId(cmi.toString(somePastDate));
-
+		cmi.meetingMap.put(975770,new MeetingImpl());
+		int actualOutput3 = cmi.generateId(cmi.toString(somePastDate));
+		
 		assertEquals(expectedOutput1,actualOutput1);
 		assertEquals(expectedOutput2,actualOutput2);
+		assertEquals(expectedOutput3,actualOutput3);
 	}
 	
 	
 
 /*	@Test
 	public void testGetFutureMeeting() {
-		
+		cmi.counter = 0;
+		cmi.addFutureMeeting(someContacts,someFutureDate);
+		String actualOutput = null;	
+		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
+			if (entry.getKey() == 975770) {
+				Calendar date = (entry.getValue().getDate());
+				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+			}
+		}
+		String expectedOutput = "19741115";
+		assertEquals(expectedOutput,actualOutput);	
+
 	}*/
 
 /*	@Test
