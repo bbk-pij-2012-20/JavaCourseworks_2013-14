@@ -163,7 +163,13 @@ public class ContactManagerImplTest {
 		assertEquals(expectedOutput2,actualOutput2);
 		assertEquals(expectedOutput3,actualOutput3);
 	}
-
+	/**
+	 * As with testGetPastMeeting(), this test relies on two other
+	 * methods working in order to work and not throw an exception.
+	 * In this case, addFutureMeeting(). As before addNewContact()
+	 * is used (in the setUp()) to avoid throwing exception 
+	 * "one or more contacts does not exist". 
+	 */
 	@Test
 	public void testGetFutureMeeting() {
 		cmi.counter = 0;
@@ -179,10 +185,21 @@ public class ContactManagerImplTest {
 		assertEquals(expectedOutput,actualOutput);	
 	}
 
-/*	@Test
+	@Test
 	public void testGetMeeting() {
+		cmi.counter = 0;
+		cmi.addFutureMeeting(someContacts,someFutureDate);
+		String actualOutput = null;	
+		for (Entry<Integer, FutureMeeting> entry : cmi.futureMeetingMap.entrySet()) {
+			if (entry.getKey() == 328270) {
+				Calendar date = entry.getValue().getDate();
+				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+			}
+		}
+		String expectedOutput = "20141115";
+		assertEquals(expectedOutput,actualOutput);	
 		
-	}*/
+	}
 
 	/*	@Test
 	public void testGetFutureMeetingListContactImpl() {
