@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -45,11 +46,12 @@ public class ContactManagerImplTest {
 		String notes2 = "no but yeah";
 		cmi.addNewContact(name,notes);
 		cmi.addNewContact(name2,notes2);
-		String name3 = "noone";
+		String name3 = "nobody";
+		nonContact = new ContactImpl(name3);
+
 		for (Contact contact : cmi.contactMap.values()) {
 			someContacts.add(contact);
 		}
-		nonContact = new ContactImpl(name3);
 	}
 	
 	/**
@@ -66,7 +68,7 @@ public class ContactManagerImplTest {
 		String actualOutput = null;	
 		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
 			if (entry.getKey() == 975770) {
-				Calendar date = (entry.getValue().getDate());
+				Calendar date = entry.getValue().getDate();
 				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 			}
 		}
@@ -78,7 +80,7 @@ public class ContactManagerImplTest {
 	public void tearDown() throws Exception {
 //		cmi = null;
 	}
-/*-reverse
+
 	@Test
 	public void testAddFutureMeeting() {		
 		cmi.counter = 0;
@@ -87,31 +89,31 @@ public class ContactManagerImplTest {
 /*		int actualOutput = cmi.addFutureMeeting(someNonContacts,someFutureDate);
  *		int expectedOutput = 328270; // 328270 = id for 15/12/14 
  * 
- * The 2 lines above correctly throws exception as one of the contacts not found in contactMap,
- * it was added directly through the ContactImpl(String name) constructor rather than via 
- * addNewContact().
+ * The 2 lines above correctly throw an exception as one of the contacts not 
+ * found in contactMap, it was added directly through the ContactImpl(String name) 
+ * constructor rather than via addNewContact().
  */
  
 /*		int actualOutput = cmi.addFutureMeeting(someContacts,somePastDate);
  *		int expectedOutput = 975770; // 975770 = id for 15/12/74
  * 
- * The 2 lines above correctly throws exception as the date is in the past rather than in 
- * future.
+ * The 2 lines above correctly throw an exception as the date is in 
+ * the past rather than in the future.
  */
-/*-reverse
+
 		int expectedOutput = 328270; 
 		int actualOutput = cmi.addFutureMeeting(someContacts,someFutureDate);
 		assertEquals(expectedOutput,actualOutput);
 	}
-reverse-*/ 
+	
 	/**
-	 * Testing with name string as inputs. In order to 
-	 * test this method directly (i.e. not via the addNewContact() 
-	 * or addNewMeeting() methods), the visibility of the private
-	 * method is changed and then the generateId() method is first
-	 * called and then the contact and key are put in directly.
-	 * This is to show that generateId() checks the hashmaps for
-	 * pre-existing id numbers, which prompt a counter increment.
+	 * Testing the private method generateId() in ContactManagerImpl with 
+	 * name string as inputs. In order to test this method directly 
+	 * (i.e. not via the addNewContact() or addNewMeeting() methods), the 
+	 * visibility of the private method is changed and then the 
+	 * generateId() method is first called and then the contact and key 
+	 * are put in directly. This is to show that generateId() checks the 
+	 * hashmaps for pre-existing id numbers, which prompt a counter increment.
 	 */
 	@Test
 	public void testGenerateId() {		
@@ -136,13 +138,13 @@ reverse-*/
 	}
 	
 	/**
-	 * Testing with name string as inputs. In order to 
-	 * test this method directly (i.e. not via the addNewContact() 
-	 * or addNewMeeting() methods), the visibility of the private
-	 * method is changed and then the generateId() method is first
-	 * called and then the contact and key are put in directly.
-	 * This is to show that generateId() checks the hashmaps for
-	 * pre-existing id numbers, which prompt a counter increment.
+	 * Testing with name string as inputs. In order to test this method 
+	 * directly (i.e. not via the addNewContact() or addNewMeeting() 
+	 * methods), the visibility of the private method is changed and then 
+	 * the generateId() method is first called and then the contact and 
+	 * key are put in directly. This is to show that generateId() checks 
+	 * the hashmaps for pre-existing id numbers, which prompt a counter 
+	 * increment.
 	 */
 	@Test
 	public void testGenerateId2() {
@@ -161,24 +163,21 @@ reverse-*/
 		assertEquals(expectedOutput2,actualOutput2);
 		assertEquals(expectedOutput3,actualOutput3);
 	}
-	
-	
 
-/*	@Test
+	@Test
 	public void testGetFutureMeeting() {
 		cmi.counter = 0;
 		cmi.addFutureMeeting(someContacts,someFutureDate);
 		String actualOutput = null;	
-		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
-			if (entry.getKey() == 975770) {
-				Calendar date = (entry.getValue().getDate());
+		for (Entry<Integer, FutureMeeting> entry : cmi.futureMeetingMap.entrySet()) {
+			if (entry.getKey() == 328270) {
+				Calendar date = entry.getValue().getDate();
 				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 			}
 		}
-		String expectedOutput = "19741115";
+		String expectedOutput = "20141115";
 		assertEquals(expectedOutput,actualOutput);	
-
-	}*/
+	}
 
 /*	@Test
 	public void testGetMeeting() {
