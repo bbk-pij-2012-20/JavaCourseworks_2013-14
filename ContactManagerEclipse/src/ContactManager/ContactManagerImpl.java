@@ -2,12 +2,15 @@ package ContactManager;
 
 import java.util.ArrayList;
 import java.util.Calendar; 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List; 
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.lang.NullPointerException;
 import java.lang.IllegalArgumentException;
@@ -301,20 +304,22 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override 
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		SortedSet<Meeting> meetingSet = null; 
-	
+		SortedMap<Calendar,Meeting> meetingTreeMap = null; 
+		List<Meeting> meetings = null;
+
 		try {
 			
 			if (!exists(contact)) { 
 				throw new IllegalArgumentException();
 			}
+		
+			meetingTreeMap = new TreeMap<>();
+			meetings = new ArrayList<>();
 			
-			meetingSet = new TreeSet<>();//not sure if this will be chronologically sorted yet need to test it.		
+			for (Meeting meeting : futureMeetingMap.values()) {
 			
-			for (FutureMeeting futureMeeting : futureMeetingMap.values()) {
-			
-				if (contains(futureMeeting.getContacts(),contact)) {
-					meetingSet.add(futureMeeting);
+				if (contains(meeting.getContacts(),contact)) {
+					meetingTreeMap.put(meeting.getDate(),meeting);
 				}
 				
 			}
@@ -322,41 +327,52 @@ public class ContactManagerImpl implements ContactManager {
 		} catch (IllegalArgumentException e) {
 			System.out.println("That contact does not exist. (Method: getFutureMeetingList()).");
  		}	
-
-		return new ArrayList<>(meetingSet);	
+		
+		for (Meeting meeting : meetingTreeMap.values()) {
+			meetings.add(meeting);
+		}
+		
+		return meetings;
 	}
 		
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		SortedSet<Meeting> meetingSet = new TreeSet<>(); 
-		
-		for (FutureMeeting futureMeeting : futureMeetingMap.values()) {
+		SortedMap<Calendar,Meeting> meetingTreeMap = new TreeMap<>(); 
+		List<Meeting> meetings = new ArrayList<>();
+
+		for (Meeting meeting : futureMeetingMap.values()) {
 			
-			if (futureMeeting.getDate().equals(date)) {
-				meetingSet.add(futureMeeting);
+			if (meeting.getDate().equals(date)) {
+				meetingTreeMap.put(meeting.getDate(),meeting);
 			}
 	
 		}
 		
-		return new ArrayList<>(meetingSet);	
+		for (Meeting meeting : meetingTreeMap.values()) {
+			meetings.add(meeting);
+		}
+		
+		return meetings;
 	}
 	
 	@Override 
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
-		SortedSet<PastMeeting> meetingSet = null; 
-	
+		SortedMap<Calendar,PastMeeting> meetingTreeMap = null; 
+		List<PastMeeting> pastMeetings = null;
+		
 		try {
 			
 			if (!exists(contact)) { 
 				throw new IllegalArgumentException();
 			}
 			
-			meetingSet = new TreeSet<>();
+			meetingTreeMap = new TreeMap<>();
+			pastMeetings = new ArrayList<>();
 			
 			for (PastMeeting pastMeeting : pastMeetingMap.values()) {
 			
 				if (contains(pastMeeting.getContacts(),contact)) {
-					meetingSet.add(pastMeeting);
+					meetingTreeMap.put(pastMeeting.getDate(),pastMeeting);
 				}
 				
 			}
@@ -364,8 +380,12 @@ public class ContactManagerImpl implements ContactManager {
 		} catch (IllegalArgumentException e) {
 			System.out.println("That contact does not exist. (Method: getPastMeetingList()).");
  		}	
+	
+		for (PastMeeting pastMeeting : meetingTreeMap.values()) {
+			pastMeetings.add(pastMeeting);
+		}
 		
-		return new ArrayList<>(meetingSet);
+		return pastMeetings;
 	}	
 	
 	/**
@@ -438,7 +458,7 @@ public class ContactManagerImpl implements ContactManager {
 		Contact contact = null;
 		
 		try {
-		
+			
 			if (name == null || notes == null) {
 				throw new NullPointerException();
 			}
