@@ -33,10 +33,10 @@ public class ContactManagerImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		someFutureDate = new GregorianCalendar(2014,11,15);// 328270 = id for 15/12/14 
-		anotherFutureDate = new GregorianCalendar(2015,11,15);//93060 = id for 15/12/15
-		somePastDate = new GregorianCalendar(1974,11,15);
-		anotherPastDate = new GregorianCalendar(1975,11,15);
+		someFutureDate = new GregorianCalendar(2014,11,15,17,30);// someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id) 
+		anotherFutureDate = new GregorianCalendar(2015,11,15,17,0);// anotherFutureDate id = 93060 (15/12/15 17:00, though time is not included in generating id)
+		somePastDate = new GregorianCalendar(1974,11,15,16,30);// somePaseDate id = 975770 (15/12/74 16:30, though time is not included in generating id)
+		anotherPastDate = new GregorianCalendar(1975,11,15,16,0);
 		
 		someContacts1 = new HashSet<>();
 		someContacts2 = new HashSet<>();
@@ -100,7 +100,7 @@ public class ContactManagerImplTest {
 		cmi.addNewPastMeeting(someContacts1,somePastDate,someText);
 		String actualOutput = null;	
 		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
-			if (entry.getKey() == 975770) {
+			if (entry.getKey() == 975770) { // 975770 = id for 15/12/74 16:30
 				Calendar date = cmi.getPastMeeting(entry.getKey()).getDate();
 				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
 			}
@@ -114,7 +114,7 @@ public class ContactManagerImplTest {
 		cmi.counter = 0;
 		
 /*		int actualOutput = cmi.addFutureMeeting(someNonContacts,someFutureDate);
- *		int expectedOutput = 328270; // 328270 = id for 15/12/14 
+ *		int expectedOutput = 328270; // someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
  * 
  * The 2 lines above correctly throw an exception as one of the contacts not 
  * found in contactMap, it was added directly through the ContactImpl(String name) 
@@ -122,13 +122,13 @@ public class ContactManagerImplTest {
  */
  
 /*		int actualOutput = cmi.addFutureMeeting(someContacts1,somePastDate);
- *		int expectedOutput = 975770; // 975770 = id for 15/12/74
+ *		int expectedOutput = 975770; // 975770 = id for 15/12/74 16:30
  * 
  * The 2 lines above correctly throw an exception as the date is in 
  * the past rather than in the future.
  */
 
-		int expectedOutput = 328270; 
+		int expectedOutput = 328270; // someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
 		int actualOutput = cmi.addFutureMeeting(someContacts1,someFutureDate);
 		assertEquals(expectedOutput,actualOutput);
 	}
@@ -176,9 +176,9 @@ public class ContactManagerImplTest {
 	@Test
 	public void testGenerateId2() {
 		cmi.counter = 0;
-		int expectedOutput1 = 328270;//future date 2014,11,15
-		int expectedOutput2 = 975770;//past date 1974,11,15
-		int expectedOutput3 = 975771;//past date 1974,11,15 again
+		int expectedOutput1 = 328270;// someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
+		int expectedOutput2 = 975770;//somePastDate id = 975770 (15/12/74 16:30)
+		int expectedOutput3 = 972691;//same somePastDate again, hence counter should increment.
 	
 		int actualOutput1 = cmi.generateId(cmi.toString(someFutureDate));
 		cmi.meetingMap.put(328270,new MeetingImpl());
@@ -203,12 +203,12 @@ public class ContactManagerImplTest {
 		cmi.addFutureMeeting(someContacts1,someFutureDate);
 		String actualOutput = null;	
 		for (Entry<Integer, FutureMeeting> entry : cmi.futureMeetingMap.entrySet()) {
-			if (entry.getKey() == 328270) {
+			if (entry.getKey() == 328270) { // someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
 				Calendar date = cmi.getFutureMeeting(entry.getKey()).getDate();
-				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+				actualOutput = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH)+date.get(Calendar.HOUR_OF_DAY)+date.get(Calendar.MINUTE);
 			}
 		}
-		String expectedOutput = "20141115";
+		String expectedOutput = "201411151730";
 		assertEquals(expectedOutput,actualOutput);	
 	}
 
@@ -220,14 +220,14 @@ public class ContactManagerImplTest {
 		
 		for (Entry<Integer, FutureMeeting> entry : cmi.futureMeetingMap.entrySet()) {
 			
-			if (entry.getKey() == 328270) {
+			if (entry.getKey() == 328270) { // someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
 				Calendar date = cmi.getMeeting(entry.getKey()).getDate();
-				actualOutput1 = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+				actualOutput1 = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH)+date.get(Calendar.HOUR_OF_DAY)+date.get(Calendar.MINUTE);
 			}
 			
 		}
 		
-		String expectedOutput1 = "20141115";
+		String expectedOutput1 = "201411151730";
 		assertEquals(expectedOutput1,actualOutput1);	
 		
 		cmi.counter = 0;
@@ -236,14 +236,14 @@ public class ContactManagerImplTest {
 		
 		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
 		
-			if (entry.getKey() == 975770) {
+			if (entry.getKey() == 975770) { //somePastDate id = 975770 (15/12/74 16:30)
 				Calendar date = cmi.getMeeting(entry.getKey()).getDate();
-				actualOutput2 = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH);
+				actualOutput2 = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH)+date.get(Calendar.HOUR_OF_DAY)+date.get(Calendar.MINUTE);
 			}
 			
 		}
 		
-		String expectedOutput2 = "19741115";
+		String expectedOutput2 = "197411151630";
 		assertEquals(expectedOutput2,actualOutput2);	
 	}
 
@@ -280,43 +280,102 @@ public class ContactManagerImplTest {
 		}
 		
 		List<Meeting> expectedList1 = new ArrayList<>();
-		expectedList1.add(cmi.getFutureMeeting(328270));
-		List<Calendar> expectedDates1 = new ArrayList<>();
+		expectedList1.add(cmi.getFutureMeeting(328270));// someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
+		List<Integer> expectedDates1 = new ArrayList<>();
 		for(Meeting meeting : expectedList1) {
-			expectedDates1.add(meeting.getDate());
+			expectedDates1.add(meeting.getId());
 		}
-		List<Calendar> expectedOutput1 = expectedDates1; 
+		List<Integer> expectedOutput1 = expectedDates1; 
 
 		List<Meeting> expectedList2 = new ArrayList<>();
 		expectedList2 = expectedList1;
-		expectedList2.add(cmi.getFutureMeeting(93060));
-		List<Calendar> expectedDates2 = new ArrayList<>();
+		expectedList2.add(cmi.getFutureMeeting(93060));// anotherFutureDate id = 93060 (15/12/15 17:00, though time is not included in generating id)
+		List<Integer> expectedDates2 = new ArrayList<>();
 		for(Meeting meeting : expectedList2) {
-			expectedDates2.add(meeting.getDate());
+			expectedDates2.add(meeting.getId());
 		}		
-		List<Calendar> expectedOutput2 = expectedDates2;
+		List<Integer> expectedOutput2 = expectedDates2;
 
 		List<Meeting> actualList1 = cmi.getFutureMeetingList(contact1);	
-		List<Calendar> actualDates1 = new ArrayList<>();
+		List<Integer> actualDates1 = new ArrayList<>();
 		for(Meeting meeting : actualList1) {
-			actualDates1.add(meeting.getDate());
+			actualDates1.add(meeting.getId());
 		}
-		List<Calendar> actualOutput1 = actualDates1;
+		List<Integer> actualOutput1 = actualDates1;
 
 		List<Meeting> actualList2 = cmi.getFutureMeetingList(contact2);
-		List<Calendar> actualDates2 = new ArrayList<>();
+		List<Integer> actualDates2 = new ArrayList<>();
 		for(Meeting meeting : actualList2) {
-			actualDates2.add(meeting.getDate());
+			actualDates2.add(meeting.getId());
+			System.out.println("line310 - meeting.getId(): "+meeting.getId());
 		}
-		List<Calendar> actualOutput2 = actualDates2;
-		
+	
+		List<Integer> actualOutput2 = actualDates2;
+
 		assertEquals(expectedOutput1,actualOutput1);
 		assertEquals(expectedOutput2,actualOutput2);
+		
 	}
 	
 	@Test
 	public void testGetFutureMeetingListCalendar() {
-		fail("Not yet implemented");
+//		cmi.counter = 0;
+		System.out.println("327 - addfuturemeeting: "+ cmi.addFutureMeeting(someContacts1,someFutureDate));
+// someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
+		System.out.println("329 - addfuturemeeting: "+cmi.addFutureMeeting(someContacts2,someFutureDate));
+// the id is 328271, because 328270 already existed. 
+		
+//		cmi.counter = 0;
+//		cmi.addFutureMeeting(someContacts2,anotherFutureDate);// 93060 = id for 15/12/15 17:00
+//		System.out.println("line330 - anotherFutureDate: "+anotherFutureDate.getTime());
+	
+		List<Meeting> expectedList1 = new ArrayList<>();
+		expectedList1.add(cmi.getFutureMeeting(328270));// someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
+		expectedList1.add(cmi.getFutureMeeting(328271));
+		List<Integer> expectedId1 = new ArrayList<>();
+		for(Meeting meeting : expectedList1) {
+			expectedId1.add(meeting.getId());
+		}
+				
+		List<Integer> expectedOutput1 = expectedId1; 
+		
+/*assigning expectedOutput2
+		List<Meeting> expectedList2 = new ArrayList<>();
+		expectedList2.add(cmi.getFutureMeeting(93061));// anotherFutureDate id = 93060 (15/12/15 17:00)
+		List<Integer> expectedId2 = new ArrayList<>();
+
+		for(Meeting meeting : expectedList2) {
+			expectedId2.add(meeting.getId());
+			System.out.println("line 367 - expectedList2:  "+meeting.getId());
+		}
+
+		for(int n : expectedId2) {
+			System.out.println("line371 - expectedId2: "+n);
+		}
+		List<Integer> expectedOutput2 = expectedId2;
+
+assigning actualOutput1*/
+		System.out.println("359 - someFutureDate.getTime()"+someFutureDate.getTime());
+		List<Meeting> actualList1 = cmi.getFutureMeetingList(someFutureDate);		
+		System.out.println("363 - someFutureDate.getTime()"+someFutureDate.getTime());
+
+		List<Integer> actualId1 = new ArrayList<>();
+		for (Meeting meeting : actualList1) {
+			actualId1.add(meeting.getId());
+			System.out.println("366 - actualList1: "+meeting.getId());
+		}
+		List<Integer> actualOutput1 = actualId1;
+/*
+		List<Meeting> actualList2 = cmi.getFutureMeetingList(date2);	
+		List<Integer> actualId2 = new ArrayList<>();
+		for(Meeting meeting : actualList2) {
+			actualId2.add(meeting.getId());
+			System.out.println("line 384 - actualList2: "+meeting.getId());
+		}
+		List<Integer> actualOutput2 = actualId2;
+*/		
+		assertEquals(expectedOutput1,actualOutput1);
+//		assertEquals(expectedOutput2,actualOutput2);
 	}
 
 	@Test
