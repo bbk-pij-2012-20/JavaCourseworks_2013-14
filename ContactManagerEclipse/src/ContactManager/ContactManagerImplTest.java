@@ -33,15 +33,15 @@ public class ContactManagerImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		someFutureDate = new GregorianCalendar(2014,11,15,17,30);// someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id) 
-		anotherFutureDate = new GregorianCalendar(2015,11,15,17,0);// anotherFutureDate id = 93060 (15/12/15 17:00, though time is not included in generating id)
-		somePastDate = new GregorianCalendar(1974,11,15,16,30);// somePaseDate id = 975770 (15/12/74 16:30, though time is not included in generating id)
+		someFutureDate = new GregorianCalendar(2014,11,15,17,30);//id=328270 (15/12/14 17:30, though time is not included in generating id) 
+		anotherFutureDate = new GregorianCalendar(2015,11,15,17,0);//id=93060 (15/12/15 17:00, though time is not included in generating id)
+		somePastDate = new GregorianCalendar(1974,11,15,16,30);//id=975770 (15/12/74 16:30, though time is not included in generating id)
 		anotherPastDate = new GregorianCalendar(1975,11,15,16,0);
 		
 		someContacts1 = new HashSet<>();
 		someContacts2 = new HashSet<>();
 		someNonContacts = new HashSet<>();
-		someText = "new past meeting notes";
+		someText = "someText";
 		
 		cmi = new ContactManagerImpl();
 		cmi.meetingMap = new HashMap<>();
@@ -224,7 +224,6 @@ public class ContactManagerImplTest {
 				Calendar date = cmi.getMeeting(entry.getKey()).getDate();
 				actualOutput1 = ""+date.get(Calendar.YEAR)+date.get(Calendar.MONTH)+date.get(Calendar.DAY_OF_MONTH)+date.get(Calendar.HOUR_OF_DAY)+date.get(Calendar.MINUTE);
 			}
-			
 		}
 		
 		String expectedOutput1 = "201411151730";
@@ -319,15 +318,14 @@ public class ContactManagerImplTest {
 	
 	@Test
 	public void testGetFutureMeetingListCalendar() {
-//		cmi.counter = 0;
+		cmi.counter = 0;
 		System.out.println("327 - addfuturemeeting: "+ cmi.addFutureMeeting(someContacts1,someFutureDate));
 // someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
 		System.out.println("329 - addfuturemeeting: "+cmi.addFutureMeeting(someContacts2,someFutureDate));
 // the id is 328271, because 328270 already existed. 
 		
-//		cmi.counter = 0;
-//		cmi.addFutureMeeting(someContacts2,anotherFutureDate);// 93060 = id for 15/12/15 17:00
-//		System.out.println("line330 - anotherFutureDate: "+anotherFutureDate.getTime());
+		cmi.addFutureMeeting(someContacts2,anotherFutureDate);// 93060 = id for 15/12/15 17:00. 
+		System.out.println("line330 - anotherFutureDate: "+anotherFutureDate.getTime());
 	
 		List<Meeting> expectedList1 = new ArrayList<>();
 		expectedList1.add(cmi.getFutureMeeting(328270));// someFutureDate id = 328270 (15/12/14 17:30, though time is not included in generating id)
@@ -339,9 +337,8 @@ public class ContactManagerImplTest {
 				
 		List<Integer> expectedOutput1 = expectedId1; 
 		
-/*assigning expectedOutput2
 		List<Meeting> expectedList2 = new ArrayList<>();
-		expectedList2.add(cmi.getFutureMeeting(93061));// anotherFutureDate id = 93060 (15/12/15 17:00)
+		expectedList2.add(cmi.getFutureMeeting(93061));// anotherFutureDate id = 93060 (15/12/15 17:00). As counter's not reset, should be 93061.
 		List<Integer> expectedId2 = new ArrayList<>();
 
 		for(Meeting meeting : expectedList2) {
@@ -354,7 +351,6 @@ public class ContactManagerImplTest {
 		}
 		List<Integer> expectedOutput2 = expectedId2;
 
-assigning actualOutput1*/
 		System.out.println("359 - someFutureDate.getTime()"+someFutureDate.getTime());
 		List<Meeting> actualList1 = cmi.getFutureMeetingList(someFutureDate);		
 		System.out.println("363 - someFutureDate.getTime()"+someFutureDate.getTime());
@@ -365,17 +361,17 @@ assigning actualOutput1*/
 			System.out.println("366 - actualList1: "+meeting.getId());
 		}
 		List<Integer> actualOutput1 = actualId1;
-/*
-		List<Meeting> actualList2 = cmi.getFutureMeetingList(date2);	
+
+		List<Meeting> actualList2 = cmi.getFutureMeetingList(anotherFutureDate);	
 		List<Integer> actualId2 = new ArrayList<>();
 		for(Meeting meeting : actualList2) {
 			actualId2.add(meeting.getId());
 			System.out.println("line 384 - actualList2: "+meeting.getId());
 		}
 		List<Integer> actualOutput2 = actualId2;
-*/		
+		
 		assertEquals(expectedOutput1,actualOutput1);
-//		assertEquals(expectedOutput2,actualOutput2);
+		assertEquals(expectedOutput2,actualOutput2);
 	}
 
 	@Test
@@ -386,31 +382,40 @@ assigning actualOutput1*/
 	/**
 	 * In order to test this method, it is first called,
 	 * with some contacts, a past date and text.
-	 * I know the past date produces an int Id of 975771. 
+	 * I know somePastDate produces an Id of 975770. 
 	 * So, in order to test for creation of the new meeting,
 	 * partly confirmed by the creation of the id, the key-
 	 * value pair is put in the map, and finally, the id 
 	 * for the new meeting created is compared with the 
-	 * expected id number (975771).
+	 * expected id number (975770).
 	 */
-/*	@Test
+	@Test
 	public void testAddNewPastMeeting() {
-		cmi.addNewPastMeeting(someContacts1,somePastDate,someText);//*if these two lines
-		cmi.pastMeetingMap.put(975770,(PastMeeting) new MeetingImpl());//*are commented out..see 8 lines down*
+		cmi.counter = 0;
+		cmi.addNewPastMeeting(someContacts1,somePastDate,someText);
+		
 		int actualOutput = 0;
-		for (Map.Entry<Integer,PastMeeting> entry : cmi.pastMeetingMap.entrySet()) {
-			if (entry.getValue().equals(meeting)) {
-				actualOutput = entry.getKey();
-			}
+		for (Meeting meeting : cmi.pastMeetingMap.values()) {
+			actualOutput = meeting.getId();
 		}
-		int expectedOutput = 975770;
-//		int expectedOutput = 0; //* ..then this would pass.*
+		int expectedOutput = 975770;//id for somePastDate 
 		assertEquals(expectedOutput,actualOutput);	
 	}
-*/
+
 	@Test
 	public void testAddMeetingNotes() {
-		fail("Not yet implemented");
+		cmi.counter = 0;
+		cmi.addNewPastMeeting(someContacts1,somePastDate,someText);
+		cmi.addMeetingNotes(975770,"testingAddMeetingNotes()");
+		
+		String expectedOutput = "someText; testingAddMeetingNotes()";
+		String actualOutput = "";
+		for (PastMeeting meeting : cmi.pastMeetingMap.values()) {
+			if (meeting.getId() == 975770) {
+				actualOutput = meeting.getNotes();
+			}
+		}
+		assertEquals(expectedOutput,actualOutput);
 	}
 	
  	@Test
