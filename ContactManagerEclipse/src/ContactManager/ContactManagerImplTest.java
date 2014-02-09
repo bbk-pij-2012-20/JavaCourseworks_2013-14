@@ -49,12 +49,11 @@ public class ContactManagerImplTest {
 		cmi.pastMeetingMap = new HashMap<>();
 		cmi.contactMap = new HashMap<>();		
 
-		String name1 = "JohnFirstSet";
-		String name2 = "BillBothSets";
-		String name3 = "FrankSecSet";
-		String name4 = "JimSecSet";
-		String noName = "nobodySetOnly";
-
+		String name1 = "JohnFirstSet";//id=708830
+		String name2 = "BillBothSets";//id=333690
+		String name3 = "FrankSecSet";//id=261090
+		String name4 = "JimSecSet";//id=911670
+		String noName = "nobodySetOnly";	
 		String notes = "yeah but no";
 		String notes2 = "no but yeah";
 		
@@ -62,8 +61,8 @@ public class ContactManagerImplTest {
 		cmi.addNewContact(name2,notes2);
 		for (Contact contact : cmi.contactMap.values()) {
 			someContacts1.add(contact);
-		}	
-		
+		}
+				
 		cmi.addNewContact(name3,notes);
 		cmi.addNewContact(name4,notes2);
 		for (Contact contact : cmi.contactMap.values()) {
@@ -435,10 +434,57 @@ public class ContactManagerImplTest {
  		assertEquals(expectedOutput,actualOutput);
  		assertEquals(expectedOutput2,actualOutput2);
  	}
-
 		
 	@Test
 	public void testGetContactsIntArray() {
+	// name1 "JohnFirstSet" id=708830 *
+	// name2 "BillBothSets" id=333690 *
+	// name3 "FrankSecSet" id=261090 *
+	// name4 "JimSecSet" id=911670 *
+	// * NB: all of these ids are after conversion toLowerCase())
+		int expectedOutput1 = 708830+333690;//name1&name2
+		int expectedOutput2 = 333690+261090+911670;//name2&name3&name4
+		
+		Set<Contact> actualSet1 = cmi.getContacts(708830,333690); 		
+		Set<Contact> actualSet2 = cmi.getContacts(333690,261090,911670); 
+
+		int actualOutput1 = 0;
+		int actualOutput2 = 0;
+
+		for (Contact c1 : actualSet1) {
+			
+			if (c1.getName().equals("JohnFirstSet")) {
+				actualOutput1 += c1.getId();
+			}
+			if (c1.getName().equals("BillBothSets")) {
+				actualOutput1 += c1.getId();
+			}
+			if (c1.getName().equals("FrankSecSet")) {
+				actualOutput1 += c1.getId();
+			}
+			if (c1.getName().equals("JimSecSet")) {
+				actualOutput1 += c1.getId();
+			}
+		}
+		
+		for (Contact c2 : actualSet2) {
+			
+			if (c2.getName().equals("JohnFirstSet")) {
+				actualOutput2 += c2.getId();
+			}
+			if (c2.getName().equals("BillBothSets")) {
+				actualOutput2 += c2.getId();
+			}
+			if (c2.getName().equals("FrankSecSet")) {
+				actualOutput2 += c2.getId();
+			}
+			if (c2.getName().equals("JimSecSet")) {
+				actualOutput2 += c2.getId();
+			}
+			
+		}
+		assertEquals(expectedOutput1,actualOutput1);
+		assertEquals(expectedOutput2,actualOutput2);
 	}
 
 	@Test
