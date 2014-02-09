@@ -32,31 +32,40 @@ import java.io.FileOutputStream;
  * It holds all contacts in a HashSet. 
  * 
  * I have written ContactManager, as a whole, on the assumptions 
- * that (a) the interface must be adhered to as much as possible. 
+ * that (a) the interface must be adhered to as much as possible; 
  * (b) the app will not be used for a very large number of contacts
  * and meetings, (i.e. only for a small organisation and only for 
  * a 3-5 years before perhaps being updated).
  * 
- * @author Shahin Zibaee 30th Jan 2014
+ * ~ 90 % of this code was written by trial & error and Eclipse's suggestions. 
+ * ~ 10 % learned from Google searching/StackOverFlow. A bit of help from Oracle 
+ * 'tutorials' and a few YouTube video tutorials. The XMLDecoder/Encoder code was
+ * written by Keith Mannock. 
+ * I wrote over 100 mini-programs to try things out (not submitted to GitHub).
+ * ~ 50 % of code was re-written to pass JUnit tests which were written after 
+ * the first attempts at the program. 
+ * 
+ * @author Shahin Zibaee 9th Feb 2014
  * 
  */
 public class ContactManagerImpl implements ContactManager {
 	
 	private static final String XMLFILENAME = "contacts.xml";
-	Map<Integer,Meeting> meetingMap = null;
-	Map<Integer,FutureMeeting> futureMeetingMap = null; 
-	Map<Integer,PastMeeting> pastMeetingMap = null;
- 	Map<Integer,Contact> contactMap = null;
-	int counter = 0;
+	private Map<Integer,Meeting> meetingMap = null;
+	private Map<Integer,FutureMeeting> futureMeetingMap = null; 
+	private Map<Integer,PastMeeting> pastMeetingMap = null;
+	private Map<Integer,Contact> contactMap = null;
+	private int counter = 0;
 	private Calendar nowDate = Calendar.getInstance();
 	
-//	public static void main(String[] args) {	
-//	
-//	new ContactManagerImpl().flush();
-//	
-//	}
-
-	/**
+/*	public static void main(String[] args) {	
+	
+	new ContactManagerImpl().flush();
+	
+	}
+*/
+	
+	/* 
 	 * This constructs a ContactManager with no parameters.
 	 * It looks for "ContactManager.xml" file on current directory. 
 	 * If not found, it makes one. If found, it reads it in from 
@@ -64,12 +73,12 @@ public class ContactManagerImpl implements ContactManager {
 	 * ContactManagerImpl. The object should consist of 4 hashmaps
 	 * and an integer called counter. 
 	 * 
-	 * (Based on KLM example code.)   
+	 * (Based on KJM example code.)   
 	 */
 	@SuppressWarnings("unchecked")
 	public ContactManagerImpl() {
 	
-/*		if (!new File(XMLFILENAME).exists()) {
+		if (!new File(XMLFILENAME).exists()) {
 		
 			meetingMap = new HashMap<Integer,Meeting>();
 			futureMeetingMap = new HashMap<Integer,FutureMeeting>();
@@ -97,7 +106,6 @@ public class ContactManagerImpl implements ContactManager {
 
 			} catch (FileNotFoundException e) {
 		
-				e.printStackTrace();
 				System.out.println("File not found. (constructor)");
 			
 			}
@@ -105,14 +113,14 @@ public class ContactManagerImpl implements ContactManager {
 		
 		updateMeetings();
 		
-*/	}
+	}
 	
 	/**
 	 * This private method updates meetings from future to past, 
 	 * according to present time/date. 
 	 * (temporarily public for JUnit to access it.)
 	 */
-	public void updateMeetings() {
+	private void updateMeetings() {
 		
 		for (Meeting meeting : futureMeetingMap.values()) {
 		
@@ -134,7 +142,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @throws  
 	 * (temporarily public for JUnit to access it.)
 	 */
-	public String toString(Calendar date) {
+	private String toString(Calendar date) {
 	
 		String dateStr = null;
 	
@@ -177,7 +185,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @throws		NullPointerException if the string is null 
 	 * (temporarily public for JUnit to access it.)
 	 */
-	public int generateId(String str) {
+	private int generateId(String str) {
 	
 		int hashId = 0;
 		
@@ -197,8 +205,10 @@ public class ContactManagerImpl implements ContactManager {
 		
 				potentiallyUniqueId = Integer.parseInt(""+hashId+counter);
 
-/* In order to reduce duplication of generateId() code for contactMap and meetingMap, 
- * the id numbers are going to be unique regardless of whether the id is for a contact of a meeting 
+/* 
+ * In order to reduce duplication of generateId() code for contactMap and meetingMap, 
+ * the id numbers are going to be unique regardless of whether the id is for a 
+ * contact or of a meeting. 
  */
 				if (!contactMap.containsKey(potentiallyUniqueId) && !meetingMap.containsKey(potentiallyUniqueId)) {
 		
@@ -215,7 +225,6 @@ public class ContactManagerImpl implements ContactManager {
 
 		} catch (NullPointerException e) {
 	
-			e.printStackTrace();
 			System.out.println("The input string to generateId() was null (Method: generateId()).");
 	
 		}
@@ -232,7 +241,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @return			true if contact exists
 	 * (Made temporarily public for JUnit to access it.)
 	 */
-	public boolean exists(Contact contact) {
+	private boolean exists(Contact contact) {
 	
 		int id = contact.getId();
 		boolean exists = false;
@@ -260,7 +269,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @return			true if the contact is in the list of contacts
 	 * (Made temporarily public for JUnit to access it.)
 	 */
-	public boolean contains(Set<Contact> contacts, Contact contact) {
+	private boolean contains(Set<Contact> contacts, Contact contact) {
 		
 		boolean contains = false;
 	
@@ -289,7 +298,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @return			a list of chronologically ordered meetings
 	 * (Made temporarily public for JUnit to access it.)
 	 */
-	public boolean onSameDay(Calendar queryDate,Calendar meetingDate) {
+	private boolean onSameDay(Calendar queryDate,Calendar meetingDate) {
 	
 		boolean sameDay = false;
 		
@@ -316,7 +325,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * @return			a list of chronologically ordered meetings
 	 * (Made temporarily public for JUnit to access it.)
 	 */
-	public <T extends Meeting> List<T> addSort(List<T> meetings,T meeting) {
+	private <T extends Meeting> List<T> addSort(List<T> meetings,T meeting) {
 		
 		List<T> orderedList = meetings;
 				
@@ -703,7 +712,7 @@ public class ContactManagerImpl implements ContactManager {
 			
 		} catch (NullPointerException e) {
 		
-			System.out.println("No name was given. (Method: getContacts(String))");
+			System.out.println("No name or string was input. (Method: getContacts(String))");
 	
 		}
 		
@@ -731,7 +740,6 @@ public class ContactManagerImpl implements ContactManager {
 
 		} catch (FileNotFoundException e) {
 	
-			e.printStackTrace();
 			System.out.println("File not found. (Method: flush())");
 
 		}

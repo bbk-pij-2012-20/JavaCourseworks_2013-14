@@ -6,17 +6,13 @@ import java.util.Set;
 	
 @SuppressWarnings("serial")
 public class PastMeetingImpl extends MeetingImpl implements PastMeeting,Serializable {
-	private String notes;
+	private String notes = "";
 	
 	public PastMeetingImpl(Set<Contact> contacts,Calendar date,String text,int id) {
 		super(contacts,date,id);
 		notes += text;
 	}
-	
-	public PastMeetingImpl(String text) {
-		notes += text;
-	}
-	
+
 	/**
 	 * An empty constructor.
 	 */
