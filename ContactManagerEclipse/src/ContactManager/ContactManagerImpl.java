@@ -2,17 +2,11 @@ package ContactManager;
 
 import java.util.ArrayList;
 import java.util.Calendar; 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List; 
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.lang.NullPointerException;
 import java.lang.IllegalArgumentException;
 import java.lang.IllegalStateException;
@@ -51,16 +45,18 @@ import java.io.FileOutputStream;
 public class ContactManagerImpl implements ContactManager {
 	
 	private static final String XMLFILENAME = "contacts.xml";
+	
 	private Map<Integer,Meeting> meetingMap = null;
 	private Map<Integer,FutureMeeting> futureMeetingMap = null; 
 	private Map<Integer,PastMeeting> pastMeetingMap = null;
 	private Map<Integer,Contact> contactMap = null;
-	private int counter = 0;
+	private Integer counter;
+	
 	private Calendar nowDate = Calendar.getInstance();
 	
-/*	public static void main(String[] args) {	
+/*	public static void main(String[] args) throws FileNotFoundException {	
 	
-	new ContactManagerImpl().flush();
+		new ContactManagerImpl().flush();
 	
 	}
 */
@@ -73,42 +69,44 @@ public class ContactManagerImpl implements ContactManager {
 	 * ContactManagerImpl. The object should consist of 4 hashmaps
 	 * and an integer called counter. 
 	 * 
-	 * (Based on KJM example code.)   
+	 * (Based on KLM example code.)   
 	 */
 	@SuppressWarnings("unchecked")
 	public ContactManagerImpl() {
 	
 		if (!new File(XMLFILENAME).exists()) {
 		
-			meetingMap = new HashMap<Integer,Meeting>();
-			futureMeetingMap = new HashMap<Integer,FutureMeeting>();
-			pastMeetingMap = new HashMap<Integer,PastMeeting>();
-			contactMap = new HashMap<Integer,Contact>();
+			meetingMap = new HashMap<>();
+			futureMeetingMap = new HashMap<>();
+			pastMeetingMap = new HashMap<>();
+			contactMap = new HashMap<>();
 			counter = 0;
 		
 		} else {
 		
-			XMLDecoder decode = null;
+			XMLDecoder decoder = null;
 		
 			try {
 		
-				decode = new XMLDecoder(
-							new BufferedInputStream(
-								new FileInputStream(XMLFILENAME)));
-				
-				meetingMap = (Map<Integer,Meeting>) decode.readObject();
-				futureMeetingMap = (Map<Integer,FutureMeeting>) decode.readObject();
-				pastMeetingMap = (Map<Integer,PastMeeting>) decode.readObject();
-				contactMap = (Map<Integer,Contact>) decode.readObject();
-				counter = (int) decode.readObject();
-
-			//	decode.close();// do I need the close() at all ...???
+				decoder = new XMLDecoder(
+			
+						 new BufferedInputStream(
+					
+						 new FileInputStream(XMLFILENAME)));
 
 			} catch (FileNotFoundException e) {
 		
 				System.out.println("File not found. (constructor)");
 			
 			}
+			
+			meetingMap  = (Map<Integer,Meeting>) decoder.readObject();
+			futureMeetingMap = (Map<Integer,FutureMeeting>) decoder.readObject();
+			pastMeetingMap = (Map<Integer,PastMeeting>) decoder.readObject();
+			contactMap = (Map<Integer,Contact>) decoder.readObject();
+			counter = (Integer) decoder.readObject();
+			decoder.close();
+
 		}
 		
 		updateMeetings();
@@ -723,20 +721,15 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void flush() { 
 	
-		XMLEncoder encode = null; 
+		XMLEncoder encoder = null; 
 		
 		try {
 		
-			encode = new XMLEncoder(
+			encoder = new XMLEncoder(
 			
-						new BufferedOutputStream(
+					 new BufferedOutputStream(
 			
-							new FileOutputStream(XMLFILENAME)));
-
-			encode.writeObject(meetingMap);
-			encode.writeObject(futureMeetingMap);
-			encode.writeObject(pastMeetingMap);
-			encode.writeObject(contactMap);
+					 new FileOutputStream(XMLFILENAME)));
 
 		} catch (FileNotFoundException e) {
 	
@@ -744,7 +737,12 @@ public class ContactManagerImpl implements ContactManager {
 
 		}
 		
-		encode.close();// do I need this close() either ???
+		encoder.writeObject(meetingMap);
+//		encoder.writeObject(futureMeetingMap);
+//		encoder.writeObject(pastMeetingMap);
+//		encoder.writeObject(contactMap);
+//		encoder.writeObject(counter);
+		encoder.close();
 
 	}
 }
