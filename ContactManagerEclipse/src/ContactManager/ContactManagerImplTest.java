@@ -488,8 +488,21 @@ public class ContactManagerImplTest {
 	}
 
 	@Test
-	public void testGetContactsString() {
-		fail("Not yet implemented");
+	public void testGetContactsString() {		
+		int expectedOutput1 = 708830+333690+261090+911670;
+		int expectedOutput2 = 708830+261090;
+		int actualOutput1 = 0;
+		int actualOutput2 = 0;
+		Set<Contact> contacts1 = cmi.getContacts("set");
+		Set<Contact> contacts2 = cmi.getContacts("n");
+		for (Contact contact : contacts1) {
+			actualOutput1 += contact.getId();
+		}
+		for (Contact contact : contacts2) {
+			actualOutput2 += contact.getId();
+		}
+		assertEquals(expectedOutput1,actualOutput1);
+		assertEquals(expectedOutput2,actualOutput2);
 	}
 
 	@Test
