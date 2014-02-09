@@ -221,6 +221,7 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		return hashId;
+		
 	}
 	
 	/**
@@ -577,6 +578,9 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public void addMeetingNotes(int id, String text) {		
 		
+		String newNotes = "";
+		PastMeeting sameMeetingNewNotes = null;
+		
 		try {
 			
 			if (nowDate.before(meetingMap.get(id).getDate())) {
@@ -597,7 +601,16 @@ public class ContactManagerImpl implements ContactManager {
 			
 			}			
 			
-			new PastMeetingImpl(text);
+			for (PastMeeting meeting : pastMeetingMap.values()) {
+				
+				if (meeting.getId() == id) {
+			
+					newNotes = meeting.getNotes() + "; " + text;
+					sameMeetingNewNotes = new PastMeetingImpl(meeting.getContacts(),meeting.getDate(),newNotes,id);
+					pastMeetingMap.put(id, sameMeetingNewNotes);
+				
+				}
+			}
 			
 		} catch (IllegalArgumentException e) {
 	
@@ -643,22 +656,19 @@ public class ContactManagerImpl implements ContactManager {
 		Set<Contact> contacts = new HashSet<>();
 		
 		try {
-			
+
 			for (int i=0;i<ids.length;i++) {
-			
+								
 				if (!contactMap.containsKey(ids[i])) {
 		
 					throw new IllegalArgumentException();
 				
 				}	
+				
+				contacts.add(contactMap.get(ids[i])); 			
+
 			} 
-					
-			for (int i=0;i<ids.length;i++) {
-		
-				contacts.add(contactMap.get(i)); 
-		
-			}
-			
+						
 		} catch (IllegalArgumentException e) {
 	
 			System.out.println("No contact(s) correspond(s) to that/those id number(s). (Method: getContacts(int.. ids)");
