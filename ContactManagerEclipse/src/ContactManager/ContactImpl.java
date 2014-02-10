@@ -35,6 +35,10 @@ public class ContactImpl implements Contact,Serializable {
 	 * @param name	the full name of the contact, e.g. "Shahin Zibaee" 
 	 * 
 	 * (IS THIS METHOD USED OTHER THAN IN TEST?)
+	 * nope! It's used only to show that an IllegalArgumentException is thrown by 
+	 * AddFutureMeeting() when a contact has not been properly added via 
+	 * AddNewContact(), but rather through this constructor. (..am wondering if it
+	 * should not be NullPointerException instead...)
 	 */
 	public ContactImpl(String name) {
 		this.name = name;
