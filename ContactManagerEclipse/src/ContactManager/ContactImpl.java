@@ -1,5 +1,7 @@
 package ContactManager;
 
+import java.io.Serializable;
+
 /**
  * This class implements a contact that has a name, notes and a unique ID
  * and can be added to meetings. 
@@ -8,7 +10,8 @@ package ContactManager;
  * @author Shahin Zibaee 24th Jan 2014
  *
  */
-public class ContactImpl implements Contact {
+@SuppressWarnings("serial")
+public class ContactImpl implements Contact,Serializable {
 	private int id;
 	private String name;
 	private String notes = "";

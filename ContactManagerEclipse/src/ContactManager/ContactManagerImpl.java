@@ -54,12 +54,12 @@ public class ContactManagerImpl implements ContactManager {
 	
 	private Calendar nowDate = Calendar.getInstance();
 	
-/*	public static void main(String[] args) throws FileNotFoundException {	
+	public static void main(String[] args) throws FileNotFoundException {	
 	
 		new ContactManagerImpl().flush();
 	
 	}
-*/
+
 	
 	/* 
 	 * This constructs a ContactManager with no parameters.
@@ -738,11 +738,12 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		encoder.writeObject(meetingMap);
-//		encoder.writeObject(futureMeetingMap);
-//		encoder.writeObject(pastMeetingMap);
-//		encoder.writeObject(contactMap);
-//		encoder.writeObject(counter);
+		encoder.writeObject(futureMeetingMap);
+		encoder.writeObject(pastMeetingMap);
+		encoder.writeObject(contactMap);
+		encoder.writeObject(counter);
 		encoder.close();
 
+		//or just "encoder.flush();"  ???
 	}
 }
