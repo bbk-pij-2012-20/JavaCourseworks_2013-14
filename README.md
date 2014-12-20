@@ -1,3 +1,3 @@
 ContactManagerEclipse
 =====================
-The readme is inside this subdirectory!
+The readme is inside this directory!
