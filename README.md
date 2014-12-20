@@ -10,11 +10,11 @@ I completed two individual-programming courseworks for the 'Programming in Java'
 I completed two group-programming courseworks for the 'Object-Oriented Design & Programmming' module:
 
 1. Simple Machine Language (SML)	- group of 2 students.		https://github.com/phil1000/SMLCW.git
-2. Battleships game 				- group of 3 students.		https://bitbucket.org/shahinzibaee/battleshipclone)
+2. Battleships game 				- group of 3 students.		https://bitbucket.org/shahinzibaee/battleshipclone
 
 
 ------------------------------------------------------------------------------------
 
 Individual Java programming project (~8 weeks)
 
-'Game of Symbiosis'												https://bitbucket.org/shahinzibaee/gameofsymbiosis/src)
+'Game of Symbiosis'												https://bitbucket.org/shahinzibaee/gameofsymbiosis/src
