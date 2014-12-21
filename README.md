@@ -15,5 +15,5 @@ Two group-programming courseworks for the 'Object-Oriented Design & Programmming
 2. Battleships game 				- group of 3 students.		https://bitbucket.org/shahinzibaee/battleshipclone
 
 ---
-One individual, supervised, Java programming project spanning ~ 8 weeks (including dissertation write-up)
+One individual, supervised, Java programming project, spanning ~ 8 weeks (including dissertation write-up):
 'Game of Symbiosis'	written in Java 1.7							https://bitbucket.org/shahinzibaee/gameofsymbiosis/overview
