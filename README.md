@@ -16,4 +16,5 @@ Two group-programming courseworks for the 'Object-Oriented Design & Programmming
 
 ---
 One individual, supervised, Java programming project, spanning ~ 8 weeks (including dissertation write-up):
+
 'Game of Symbiosis'	written in Java 1.7							https://bitbucket.org/shahinzibaee/gameofsymbiosis/overview
