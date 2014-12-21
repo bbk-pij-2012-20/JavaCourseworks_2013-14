@@ -1,6 +1,7 @@
 Links to my 4 Java Programming courseworks and end-of-year project
 (completed as part of my conversion masters in Computer Science at Birkbeck College London, 2012-2014)
 
+
 I completed two individual-programming courseworks for the 'Programming in Java' module:
 
 1. Contact Manager												https://github.com/bbk-pij-2012-20/ContactManager.git
