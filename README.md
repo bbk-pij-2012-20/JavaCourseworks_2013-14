@@ -8,7 +8,6 @@ I completed two individual-programming courseworks for the 'Programming in Java'
 2. Quiz	game													https://github.com/bbk-pij-2012-20/Quiz.git
 
 
-
 I completed two group-programming courseworks for the 'Object-Oriented Design & Programmming' module:
 
 1. Simple Machine Language (SML)	- group of 2 students.		https://github.com/phil1000/SMLCW.git
