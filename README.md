@@ -1,12 +1,13 @@
 Java Programming courseworks - Computer Science MSc 2012-2014, Birkbeck College London.
-============================   --------------------------------------------------------
+---
 
 
 I completed two individual-programming courseworks for the 'Programming in Java' module:
 
 1. Contact Manager												https://github.com/bbk-pij-2012-20/ContactManager.git
 2. Quiz	game													https://github.com/bbk-pij-2012-20/Quiz.git
----
+
+
 
 I completed two group-programming courseworks for the 'Object-Oriented Design & Programmming' module:
 
@@ -16,6 +17,7 @@ I completed two group-programming courseworks for the 'Object-Oriented Design & 
 
 ------------------------------------------------------------------------------------
 
-Individual Java programming project (~8 weeks)
+A supervised software development exercise spanning ~ 8 weeks (including dissertation write-up)
+---
 
-'Game of Symbiosis'												https://bitbucket.org/shahinzibaee/gameofsymbiosis/overview
+'Game of Symbiosis'	written in Java 1.7							https://bitbucket.org/shahinzibaee/gameofsymbiosis/overview
