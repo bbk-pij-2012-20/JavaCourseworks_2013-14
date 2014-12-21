@@ -3,7 +3,7 @@ Links to my 4 Java Programming courseworks as well as my end-of-year project.
 (completed as part of my conversion masters in Computer Science at Birkbeck College London, 2012-2014)
 
 
-* my 2 individual-programming courseworks for the 'Programming in Java' module:
+my 2 individual-programming courseworks for the 'Programming in Java' module:
 
 1. Contact Manager												https://github.com/bbk-pij-2012-20/ContactManager.git
 2. Quiz	game													https://github.com/bbk-pij-2012-20/Quiz.git
