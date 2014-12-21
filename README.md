@@ -1,7 +1,7 @@
 Java Programming courseworks
----
-###Computer Science MSc 2012-2014, Birkbeck College London.
 
+###Computer Science MSc 2012-2014, Birkbeck College London.
+---
 
 
 I completed two individual-programming courseworks for the 'Programming in Java' module:
