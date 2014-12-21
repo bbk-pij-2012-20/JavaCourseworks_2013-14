@@ -1,5 +1,7 @@
-Java Programming courseworks - Computer Science MSc 2012-2014, Birkbeck College London.
+Java Programming courseworks
 ---
+###Computer Science MSc 2012-2014, Birkbeck College London.
+
 
 
 I completed two individual-programming courseworks for the 'Programming in Java' module:
@@ -16,7 +18,7 @@ I completed two group-programming courseworks for the 'Object-Oriented Design & 
 
 ------------------------------------------------------------------------------------
 
-A supervised software development exercise spanning ~ 8 weeks (including dissertation write-up)
----
+###A supervised software development exercise spanning ~ 8 weeks (including dissertation write-up)
+
 
 'Game of Symbiosis'	written in Java 1.7							https://bitbucket.org/shahinzibaee/gameofsymbiosis/overview
